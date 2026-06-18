@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aurora · Reservas & Eventos — Protótipo</title>
+<style>
+  :root{
+    --wine:#6b1f2a; --wine-dark:#511720; --terra:#c25b34; --gold:#c79a4b;
+    --cream:#f7f1e8; --paper:#fffdf9; --ink:#2b211c; --muted:#7a6c61;
+    --line:#e7ddcf; --green:#2f8f5b; --green-bg:#e7f3ec; --red:#c0392b; --red-bg:#fbeae8;
+    --amber:#b9821f; --amber-bg:#fbf2dd; --blue:#2d6da3; --blue-bg:#e6eff6;
+    --wa:#25d366; --wa-bg:#0b1418;
+    --shadow:0 6px 24px rgba(43,33,28,.10); --shadow-sm:0 2px 8px rgba(43,33,28,.07);
+    --r:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--cream);color:var(--ink);line-height:1.5}
+  button{font-family:inherit;cursor:pointer;border:none;background:none}
+  img{max-width:100%}
+  .hidden{display:none!important}
+
+  #demobar{position:sticky;top:0;z-index:50;background:var(--ink);color:#fff;display:flex;align-items:center;gap:14px;padding:8px 18px;font-size:13px;flex-wrap:wrap}
+  #demobar .tag{background:var(--gold);color:var(--ink);font-weight:700;padding:2px 9px;border-radius:20px;font-size:11px;letter-spacing:.3px}
+  #demobar .lang{margin-left:auto;display:flex;background:rgba(255,255,255,.12);border-radius:30px;padding:3px}
+  #demobar .lang button{color:#cfc7bf;padding:5px 12px;border-radius:30px;font-size:12px;font-weight:700}
+  #demobar .lang button.on{background:var(--gold);color:var(--ink)}
+  #demobar .seg{display:flex;background:rgba(255,255,255,.12);border-radius:30px;padding:3px}
+  #demobar .seg button{color:#cfc7bf;padding:6px 16px;border-radius:30px;font-size:13px;font-weight:600}
+  #demobar .seg button.on{background:#fff;color:var(--ink)}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--wine);color:#fff;padding:12px 22px;border-radius:30px;font-weight:600;font-size:15px;transition:.15s;box-shadow:var(--shadow-sm)}
+  .btn:hover{background:var(--wine-dark)}
+  .btn.alt{background:#fff;color:var(--wine);border:1.5px solid var(--wine);box-shadow:none}
+  .btn.ghost{background:transparent;color:var(--muted);box-shadow:none;padding:10px 14px}
+  .btn.sm{padding:8px 14px;font-size:13px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:3px 11px;border-radius:20px;font-size:12px;font-weight:700}
+  .pill.green{background:var(--green-bg);color:var(--green)}
+  .pill.red{background:var(--red-bg);color:var(--red)}
+  .pill.amber{background:var(--amber-bg);color:var(--amber)}
+  .pill.blue{background:var(--blue-bg);color:var(--blue)}
+  .pill.gray{background:#eee5d8;color:var(--muted)}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:600;letter-spacing:.2px}
+  .serif{font-family:Georgia,serif}
+
+  #client{min-height:100vh;display:flex;flex-direction:column}
+  .cnav{display:flex;align-items:center;gap:26px;padding:16px 0;border-bottom:1px solid var(--line);background:var(--paper)}
+  .cnav .brand{font-family:Georgia,serif;font-size:22px;color:var(--wine);font-weight:700;display:flex;flex-direction:column;line-height:1}
+  .cnav .brand small{font-family:"Segoe UI",sans-serif;font-size:10px;letter-spacing:3px;color:var(--gold);font-weight:600;margin-top:3px}
+  .cnav a{color:var(--ink);font-size:15px;font-weight:500;cursor:pointer;padding:4px 0;border-bottom:2px solid transparent}
+  .cnav a:hover,.cnav a.on{border-color:var(--gold)}
+  .cnav .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+
+  .hero{position:relative;background:linear-gradient(120deg,var(--wine) 0%,var(--wine-dark) 60%,#3a0f15 100%);color:#fff;padding:74px 0 86px;text-align:center;overflow:hidden}
+  .hero:after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 80% 20%,rgba(199,154,75,.22),transparent 45%);}
+  .hero .inner{position:relative;z-index:1}
+  .hero h1{font-size:46px;margin-bottom:14px}
+  .hero p{font-size:18px;opacity:.9;max-width:560px;margin:0 auto 30px}
+  .hero .meta{margin-top:26px;font-size:13px;opacity:.78;letter-spacing:.5px}
+
+  .section{padding:54px 0}
+  .section h2{font-size:30px;color:var(--wine);margin-bottom:6px}
+  .section .lead{color:var(--muted);margin-bottom:28px}
+  .grid{display:grid;gap:20px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-sm)}
+  .card .body{padding:18px}
+
+  .evcard .top{height:120px;background:linear-gradient(135deg,var(--terra),var(--wine));position:relative;display:flex;align-items:flex-end;padding:14px;color:#fff}
+  .evcard .top .date{position:absolute;top:12px;left:12px;background:#fff;color:var(--wine);border-radius:10px;text-align:center;padding:6px 10px;line-height:1.1;box-shadow:var(--shadow-sm)}
+  .evcard .top .date b{font-size:20px;display:block;font-family:Georgia,serif}
+  .evcard .top .date span{font-size:11px;text-transform:uppercase;letter-spacing:1px}
+  .evcard h3{font-size:19px;margin-bottom:4px}
+  .evcard .price{color:var(--terra);font-weight:700}
+
+  .menu-cat{margin-bottom:30px}
+  .menu-cat h3{font-size:20px;color:var(--wine);border-bottom:2px solid var(--gold);display:inline-block;padding-bottom:4px;margin-bottom:14px}
+  .menu-item{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px dashed var(--line)}
+  .menu-item .name{font-weight:600}
+  .menu-item .desc{font-size:13px;color:var(--muted)}
+  .menu-item .pr{font-weight:700;color:var(--ink);white-space:nowrap}
+  .badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-left:6px;vertical-align:middle}
+  .badge.veg{background:var(--green-bg);color:var(--green)}
+  .badge.hot{background:var(--red-bg);color:var(--red)}
+  .badge.out{background:#eee5d8;color:var(--muted)}
+
+  .footer{margin-top:auto;background:var(--ink);color:#cfc4ba;padding:30px 0;font-size:13px;text-align:center}
+
+  .resv{max-width:680px;margin:30px auto;background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+  .resv .head{background:var(--wine);color:#fff;padding:20px 26px}
+  .resv .head h2{color:#fff;font-size:22px}
+  .steps{display:flex;gap:6px;margin-top:14px}
+  .steps .s{flex:1;height:5px;border-radius:4px;background:rgba(255,255,255,.25)}
+  .steps .s.done{background:var(--gold)}
+  .resv .step{padding:26px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink)}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--gold)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{padding:10px 16px;border:1.5px solid var(--line);border-radius:30px;font-size:14px;font-weight:600;background:#fff;color:var(--ink)}
+  .chip.on{background:var(--wine);color:#fff;border-color:var(--wine)}
+  .area-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .area{border:1.5px solid var(--line);border-radius:12px;padding:16px;text-align:center;background:#fff}
+  .area.on{border-color:var(--wine);background:#fcf6f0;box-shadow:inset 0 0 0 1px var(--wine)}
+  .area .ic{font-size:26px}
+  .area .nm{font-weight:700;margin-top:6px}
+  .area .ct{font-size:12px;color:var(--muted)}
+  .tables{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+  .tbl{border:1.5px solid var(--line);border-radius:10px;padding:12px 6px;text-align:center;background:#fff;font-size:13px}
+  .tbl b{display:block;font-size:15px}
+  .tbl .cap{color:var(--muted);font-size:11px}
+  .tbl.on{border-color:var(--wine);background:#fcf6f0}
+  .tbl.busy{opacity:.35;cursor:not-allowed;background:#f1e9dd}
+  .resv .foot{display:flex;justify-content:space-between;align-items:center;padding:18px 26px;border-top:1px solid var(--line);background:#fbf6ef}
+  .summary{background:#fbf6ef;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px}
+  .summary .ln{display:flex;justify-content:space-between;padding:5px 0;font-size:14px}
+  .summary .ln.total{border-top:1px solid var(--line);margin-top:6px;padding-top:10px;font-weight:700;font-size:17px;color:var(--wine)}
+  .note{background:var(--amber-bg);border:1px solid #f0dfb4;color:#7a5a14;padding:11px 14px;border-radius:10px;font-size:13px;display:flex;gap:8px}
+
+  .pix{text-align:center}
+  .qr{width:188px;height:188px;margin:6px auto 14px;border:8px solid #fff;box-shadow:var(--shadow);border-radius:10px}
+  .pixkey{background:#fff;border:1px dashed var(--gold);border-radius:10px;padding:10px;font-family:monospace;font-size:13px;word-break:break-all;color:var(--ink)}
+  .confirm{text-align:center;padding:30px 26px}
+  .confirm .big{width:84px;height:84px;border-radius:50%;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;font-size:46px;margin:0 auto 16px}
+
+  /* WhatsApp phone */
+  .phone{width:280px;margin:18px auto 0;background:var(--wa-bg);border-radius:26px;padding:10px;box-shadow:var(--shadow);border:3px solid #222}
+  .phone .scr{background:#0d1a20;border-radius:18px;overflow:hidden}
+  .phone .wahead{background:#1f2c33;color:#fff;padding:10px 12px;display:flex;align-items:center;gap:9px;font-size:13px}
+  .phone .wahead .ava{width:30px;height:30px;border-radius:50%;background:var(--wine);display:flex;align-items:center;justify-content:center;font-family:Georgia;font-size:13px}
+  .phone .wahead .st{font-size:10px;color:#8aa]}
+  .phone .chat{padding:14px 10px;min-height:80px;background-image:linear-gradient(rgba(11,20,24,.92),rgba(11,20,24,.92));background-size:cover}
+  .bubble{background:#075e54;color:#e9ffe9;border-radius:10px 10px 10px 2px;padding:9px 11px;font-size:12.5px;line-height:1.5;text-align:left;white-space:pre-line;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+  .bubble .bt{font-size:10px;color:#9fe8c0;text-align:right;margin-top:4px}
+
+  .consent{display:flex;gap:9px;align-items:flex-start;font-size:13px;color:var(--muted);background:#fbf6ef;border:1px solid var(--line);padding:12px;border-radius:10px}
+  .consent input{margin-top:3px}
+
+  #admin{display:none;min-height:100vh}
+  .admin-shell{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 38px)}
+  .side{background:var(--wine-dark);color:#e9ddd0;padding:22px 0}
+  .side .brand{padding:0 22px 18px;font-family:Georgia,serif;font-size:20px;color:#fff;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:12px}
+  .side .brand small{display:block;font-family:"Segoe UI";font-size:10px;letter-spacing:2px;color:var(--gold);margin-top:3px}
+  .side a{display:flex;align-items:center;gap:11px;padding:12px 22px;color:#d7c8b8;font-size:14.5px;font-weight:500;cursor:pointer;border-left:3px solid transparent}
+  .side a:hover{background:rgba(255,255,255,.06)}
+  .side a.on{background:rgba(199,154,75,.16);color:#fff;border-left-color:var(--gold)}
+  .side .ic{width:20px;text-align:center}
+  .side .soon{margin-top:18px;padding:0 22px;font-size:10px;letter-spacing:1.5px;color:#a08c79;text-transform:uppercase}
+  .side a.dim{color:#a08c79}.side a.dim .tag{margin-left:auto;font-size:9px;background:rgba(255,255,255,.12);padding:2px 6px;border-radius:10px}
+
+  .main{background:var(--cream);padding:26px 30px;overflow:auto}
+  .main .topline{display:flex;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:10px}
+  .main .topline h2{font-size:26px;color:var(--wine)}
+  .main .topline .sub{color:var(--muted);font-size:13px}
+  .main .topline .actions{margin-left:auto;display:flex;gap:10px}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+  .kpi{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow-sm)}
+  .kpi .lbl{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+  .kpi .val{font-size:30px;font-family:Georgia,serif;color:var(--ink);margin:6px 0 2px}
+  .kpi .delta{font-size:12px;font-weight:600}
+  .kpi .delta.up{color:var(--green)} .kpi .delta.down{color:var(--red)}
+  .kpi .bar{height:7px;background:var(--line);border-radius:5px;margin-top:10px;overflow:hidden}
+  .kpi .bar i{display:block;height:100%;background:var(--terra)}
+
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);margin-bottom:22px}
+  .panel .ph{display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:8px}
+  .panel .ph h3{font-size:17px}.panel .ph .actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+  .panel .pb{padding:6px 20px 16px}
+  .twocol{display:grid;grid-template-columns:1.6fr 1fr;gap:22px;align-items:start}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:10px 8px;border-bottom:1px solid var(--line)}
+  td{padding:11px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr.clk:hover{background:#fcf6f0;cursor:pointer}
+  .who{display:flex;align-items:center;gap:10px}
+  .av{width:34px;height:34px;border-radius:50%;background:var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+  .stars{color:var(--gold);font-size:13px;letter-spacing:1px}
+  .muted{color:var(--muted)}
+  .tiny{font-size:12px;color:var(--muted)}
+
+  .seg2{display:inline-flex;background:#efe6d8;border-radius:10px;padding:3px}
+  .seg2 button{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted)}
+  .seg2 button.on{background:#fff;color:var(--ink);box-shadow:var(--shadow-sm)}
+
+  .slot{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .slot .time{width:54px;font-weight:700;color:var(--wine);font-family:Georgia,serif}
+  .slot .items{flex:1;display:flex;flex-wrap:wrap;gap:8px}
+  .rchip{background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 11px;font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer}
+  .rchip .dot{width:8px;height:8px;border-radius:50%}
+  .dot.paid{background:var(--green)} .dot.pending{background:var(--amber)}
+  .dot.seated{background:var(--blue)} .dot.noshow{background:var(--red)} .dot.cancel{background:#aaa}
+
+  /* calendar */
+  .cal{width:100%}
+  .cal .cgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .cal .dow{text-align:center;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0}
+  .cal .cell{min-height:74px;border:1px solid var(--line);border-radius:9px;padding:6px;background:#fff;font-size:12px;position:relative}
+  .cal .cell.out{background:#f3ece1;opacity:.5}
+  .cal .cell.today{border-color:var(--wine);box-shadow:inset 0 0 0 1px var(--wine)}
+  .cal .cell .dn{font-weight:700;color:var(--ink)}
+  .cal .cell .cnt{display:inline-block;margin-top:5px;background:var(--terra);color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:700}
+  .cal .cell .ev{margin-top:4px;background:var(--blue-bg);color:var(--blue);border-radius:6px;padding:2px 5px;font-size:10px;font-weight:700;line-height:1.2;overflow:hidden}
+  .cal .nav{display:flex;align-items:center;gap:12px}
+  .cal .nav b{font-family:Georgia,serif;font-size:17px;color:var(--wine);min-width:140px;text-align:center}
+  .cal .nav button{width:30px;height:30px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:15px;color:var(--wine)}
+
+  .modal{position:fixed;inset:0;background:rgba(43,33,28,.5);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
+  .modal.open{display:flex}
+  .modal .box{background:var(--paper);border-radius:16px;max-width:480px;width:100%;box-shadow:var(--shadow);overflow:hidden;animation:pop .18s ease}
+  @keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+  .modal .mh{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center}
+  .modal .mh h3{font-size:19px}
+  .modal .mh .x{margin-left:auto;font-size:22px;color:var(--muted);cursor:pointer;line-height:1}
+  .modal .mb{padding:20px 22px}
+  .kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .kv:last-child{border:none}.kv .k{color:var(--muted)}
+  .modal .mf{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;background:#fbf6ef}
+
+  @media(max-width:880px){
+    .g3,.g2{grid-template-columns:1fr} .kpis{grid-template-columns:repeat(2,1fr)}
+    .admin-shell{grid-template-columns:1fr} .side{display:flex;overflow-x:auto;padding:8px} .side .brand,.side .soon{display:none}
+    .twocol{grid-template-columns:1fr} .row{grid-template-columns:1fr} .area-grid{grid-template-columns:1fr}
+    .hero h1{font-size:34px} .cnav{gap:14px;flex-wrap:wrap}
+  }
+</style>
+</head>
+<body>
+
+<div id="demobar">
+  <span class="tag" data-i18n="demo.tag">PROTÓTIPO</span>
+  <span>Aurora · <span data-i18n="demo.sub">Sistema de Reservas & Eventos</span></span>
+  <div class="seg">
+    <button id="m-client" class="on" onclick="setMode('client')" data-i18n="nav.client">👤 Cliente</button>
+    <button id="m-admin" onclick="setMode('admin')" data-i18n="nav.admin">🏠 Painel do Dono</button>
+  </div>
+  <div class="lang">
+    <button id="l-pt" class="on" onclick="setLang('pt')">PT</button>
+    <button id="l-es" onclick="setLang('es')">ES</button>
+  </div>
+</div>
+
+<!-- ================= CLIENT ================= -->
+<div id="client">
+  <nav class="cnav">
+    <div class="wrap" style="display:flex;align-items:center;gap:26px;width:100%">
+      <div class="brand">Aurora<small>COZINHA & EVENTOS</small></div>
+      <a data-v="home" onclick="cgo('home')" class="on" data-i18n="cnav.home">Início</a>
+      <div class="right"><button class="btn sm" onclick="startResv()" data-i18n="cnav.book">Reservar mesa</button></div>
+    </div>
+  </nav>
+
+  <div id="c-home" class="cview">
+    <section class="hero"><div class="inner wrap">
+      <h1 data-i18n="hero.title">Sua mesa na Aurora</h1>
+      <p data-i18n="hero.sub">Reserve em menos de um minuto, escolha seu ambiente favorito e garanta seu lugar nas nossas noites especiais.</p>
+      <button class="btn" style="background:var(--gold);color:var(--ink)" onclick="startResv()" data-i18n="hero.cta">Reservar agora →</button>
+      <div class="meta" data-i18n="hero.meta">Aberto · Almoço 12h–16h · Jantar 18h–23h · Pagamento via PIX</div>
+    </div></section>
+    <section class="section" style="background:linear-gradient(180deg,#fcf6ee,var(--cream))"><div class="wrap">
+      <div style="display:inline-block;background:var(--gold);color:var(--ink);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:12px">✦ <span data-i18n="home.evEyebrow">Agenda da temporada</span></div>
+      <h2 data-i18n="home.evTitle">Em breve na Aurora</h2>
+      <p class="lead" data-i18n="home.evLead">Espie as próximas experiências da casa — reservas em breve.</p>
+      <div class="grid g3" id="home-events"></div>
+    </div></section>
+  </div>
+
+  <div id="c-resv" class="cview hidden"><div class="resv">
+    <div class="head"><h2 id="resv-title">Reservar mesa</h2><div class="steps" id="resv-steps"></div></div>
+    <div id="resv-body"></div>
+  </div></div>
+
+  <div class="footer"><div class="wrap" id="footer-txt"></div></div>
+</div>
+
+<!-- ================= ADMIN ================= -->
+<div id="admin"><div class="admin-shell">
+  <aside class="side">
+    <div class="brand">Aurora<small>PAINEL</small></div>
+    <a data-av="dash" class="on" onclick="ago('dash')"><span class="ic">📊</span> <span data-i18n="side.dash">Visão geral</span></a>
+    <a data-av="resv" onclick="ago('resv')"><span class="ic">📅</span> <span data-i18n="side.resv">Reservas</span></a>
+    <a data-av="events" onclick="ago('events')"><span class="ic">🎉</span> <span data-i18n="side.events">Eventos</span></a>
+    <a data-av="clients" onclick="ago('clients')"><span class="ic">👥</span> <span data-i18n="side.clients">Clientes</span></a>
+    <a data-av="menu" onclick="ago('menu')"><span class="ic">🍽️</span> <span data-i18n="side.menu">Cardápio</span></a>
+    <div class="soon" data-i18n="side.soon">Próximas fases</div>
+    <a class="dim"><span class="ic">🧾</span> <span data-i18n="side.orders">Pedidos</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
+    <a class="dim"><span class="ic">👨‍🍳</span> <span data-i18n="side.kitchen">Cozinha</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
+    <a class="dim"><span class="ic">📦</span> <span data-i18n="side.stock">Estoque</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
+  </aside>
+  <main class="main" id="admin-main"></main>
+</div></div>
+
+<div class="modal" id="modal"><div class="box">
+  <div class="mh"><h3 id="mod-title">Reserva</h3><span class="x" onclick="closeModal()">×</span></div>
+  <div class="mb" id="mod-body"></div><div class="mf" id="mod-foot"></div>
+</div></div>
+
+<script>
+/* ===================== i18n ===================== */
+let L = 'pt';
+const T = {
+ pt:{
+  'demo.tag':'PROTÓTIPO','demo.sub':'Sistema de Reservas & Eventos','nav.client':'👤 Cliente','nav.admin':'🏠 Painel do Dono',
+  'cnav.home':'Início','cnav.menu':'Cardápio','cnav.events':'Eventos','cnav.book':'Reservar mesa',
+  'hero.title':'Sua mesa na Aurora','hero.sub':'Reserve em menos de um minuto, escolha seu ambiente favorito e garanta seu lugar nas nossas noites especiais.','hero.cta':'Reservar agora →','hero.meta':'Aberto · Almoço 12h–16h · Jantar 18h–23h · Pagamento via PIX',
+  'home.evEyebrow':'Agenda da temporada','home.evTitle':'Em breve na Aurora','home.evLead':'Espie as próximas experiências da casa — reservas em breve.',
+  'card.per':'/pessoa','card.book':'Reservar lugar','card.vagas':'vagas','card.soon':'Reservas em breve',
+  'w.bookTable':'Reservar mesa','w.date':'Data','w.people':'Pessoas','w.turn':'Turno','w.lunch':'Almoço','w.dinner':'Jantar','w.time':'Horário',
+  'w.ambience':'Ambiente','w.chooseTable':'Escolha sua mesa','w.cap':'capacidade ≥','w.seats':'lug.','w.legend':'⬜ disponível · 🔒 ocupada','w.noTables':'Sem mesas livres neste ambiente para esse tamanho. Tente outro ambiente.',
+  'w.name':'Nome completo','w.cpf':'CPF','w.phone':'Telefone / WhatsApp','w.email':'E-mail','w.notes':'Observações (alergias, ocasião especial...)','w.notesPh':'Opcional','w.namePh':'Seu nome',
+  'w.consent':'Autorizo o uso dos meus dados para gerenciar a reserva, conforme a Política de Privacidade (LGPD).',
+  'w.cancel':'Cancelar','w.continue':'Continuar →','w.back':'← Voltar','w.toPay':'Ir para pagamento →','w.fill':'Preencha nome, CPF e telefone.',
+  'w.groupNote':'Grupos de 5+ pessoas são alocados pela equipe. Confirmaremos a melhor mesa por WhatsApp após o pagamento.',
+  'w.payTitle':'Pague com PIX para confirmar','w.payScan':'Escaneie o QR code ou copie a chave abaixo','w.copyKey':'Copiar chave PIX','w.copied':'Chave copiada ✓','w.paid':'Já paguei (simular) ✓',
+  'w.payNote':'Pagamento 100% antecipado. Em caso de cancelamento com 24h de antecedência, geramos um crédito para outra data.',
+  'w.resv':'Reserva','w.event':'Evento','w.signal':'Sinal da reserva','w.total':'Total','w.onName':'Em nome de','w.dateTime':'Data / horário',
+  'w.confirmed':'Reserva confirmada!','w.confirmedSub':'Enviamos a confirmação e o comprovante para o seu WhatsApp.','w.code':'Código','w.payment':'Pagamento','w.payPaid':'Pago','w.toHome':'Voltar ao início','w.seeWa':'Ver no WhatsApp ↓','w.online':'online',
+  'side.dash':'Visão geral','side.resv':'Reservas','side.events':'Eventos','side.clients':'Clientes','side.menu':'Cardápio','side.soon':'Próximas fases','side.orders':'Pedidos','side.kitchen':'Cozinha','side.stock':'Estoque','side.soonTag':'em breve',
+  'a.overview':'Visão geral','a.daySummary':'resumo do dia','a.seeAgenda':'Ver agenda','a.openSite':'Abrir site do cliente',
+  'a.resvToday':'Reservas hoje','a.guests':'Comensais','a.occ':'Ocupação','a.revenue':'Receita (PIX)','a.vsYest':'+3 vs. ontem','a.lunchDinner':'almoço + jantar','a.goal':'meta 75%','a.advance':'antecipado',
+  'a.todayAgenda':'Agenda de hoje','a.activeResv':'reservas ativas','a.nextEvent':'Próximo evento','a.soldSeats':'Vagas vendidas','a.expRevenue':'Receita prevista','a.attention':'Atenção','a.waitingPix':'⏳ Aguardando PIX','a.noshowToday':'⚠️ No-show hoje','a.freeTables':'🪑 Mesas livres agora','a.oneResv':'reserva','a.oneClient':'cliente',
+  'a.manageResv':'Gerencie a agenda, confirme pagamentos e marque chegadas','a.newResv':'+ Nova reserva','a.today':'Hoje','a.week':'Semana','a.calendar':'Calendário',
+  'th.client':'Cliente','th.time':'Hora','th.pax':'Pax','th.table':'Mesa','th.amb':'Ambiente','th.value':'Valor','th.status':'Status',
+  'a.eventsSub':'Crie eventos com menu exclusivo e preço especial; acompanhe as vagas','a.newEvent':'+ Novo evento','th.event':'Evento','th.date':'Data','th.type':'Tipo','th.price':'Preço','th.seats':'Vagas','th.occ':'Ocupação','th.expRev':'Receita prevista',
+  'a.clientsSub':'Histórico de visitas, faltas e confiabilidade — identificados por CPF','a.export':'Exportar','th.phone':'Telefone','th.visits':'Visitas','th.noshows':'No-shows','th.trust':'Confiabilidade','th.last':'Última visita','th.tags':'Marcadores',
+  'a.menuSub':'Edite pratos, preços e disponibilidade — reflete no site do cliente','a.addItem':'+ Adicionar item','a.items':'itens','a.available':'Disponível','a.soldout':'Esgotado','a.edit':'Editar',
+  'm.status':'Status','m.dateTime':'Data / horário','m.people':'Pessoas','m.tableAmb':'Mesa / ambiente','m.payment':'Pagamento','m.phone':'Telefone','m.cpf':'CPF','m.notes':'Observações','m.close':'Fechar','m.confirmPay':'Confirmar pagamento','m.markArrived':'Marcar chegada','m.markSeated':'Marcar como sentado','m.paid':'Pago','m.pending':'Pendente','m.via':'via PIX',
+  'st.seated':'Sentado','st.paid':'Pago','st.pending':'Pendente','st.noshow':'No-show','st.cancel':'Cancelada',
+  'turn.lunch':'Almoço','turn.dinner':'Jantar','footer':'Aurora · Rua das Laranjeiras, 120 — Rio de Janeiro · (21) 99999-0000 · <span class="muted">Protótipo de demonstração — nenhum pagamento real é processado.</span>',
+  'weekFull':['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'],
+  'weekShort':['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],'monShort':['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'],
+  'monFull':['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
+ },
+ es:{
+  'demo.tag':'PROTOTIPO','demo.sub':'Sistema de Reservas y Eventos','nav.client':'👤 Cliente','nav.admin':'🏠 Panel del Dueño',
+  'cnav.home':'Inicio','cnav.menu':'Carta','cnav.events':'Eventos','cnav.book':'Reservar mesa',
+  'hero.title':'Tu mesa en Aurora','hero.sub':'Reserva en menos de un minuto, elige tu ambiente favorito y asegura tu lugar en nuestras noches especiales.','hero.cta':'Reservar ahora →','hero.meta':'Abierto · Almuerzo 12h–16h · Cena 18h–23h · Pago vía PIX',
+  'home.evEyebrow':'Agenda de temporada','home.evTitle':'Próximamente en Aurora','home.evLead':'Conoce las próximas experiencias de la casa — reservas próximamente.',
+  'card.per':'/persona','card.book':'Reservar lugar','card.vagas':'plazas','card.soon':'Reservas próximamente',
+  'w.bookTable':'Reservar mesa','w.date':'Fecha','w.people':'Personas','w.turn':'Turno','w.lunch':'Almuerzo','w.dinner':'Cena','w.time':'Horario',
+  'w.ambience':'Ambiente','w.chooseTable':'Elige tu mesa','w.cap':'capacidad ≥','w.seats':'lug.','w.legend':'⬜ disponible · 🔒 ocupada','w.noTables':'No hay mesas libres en este ambiente para ese tamaño. Prueba otro ambiente.',
+  'w.name':'Nombre completo','w.cpf':'CPF','w.phone':'Teléfono / WhatsApp','w.email':'Correo','w.notes':'Observaciones (alergias, ocasión especial...)','w.notesPh':'Opcional','w.namePh':'Tu nombre',
+  'w.consent':'Autorizo el uso de mis datos para gestionar la reserva, conforme a la Política de Privacidad (LGPD).',
+  'w.cancel':'Cancelar','w.continue':'Continuar →','w.back':'← Volver','w.toPay':'Ir al pago →','w.fill':'Completa nombre, CPF y teléfono.',
+  'w.groupNote':'Los grupos de 5+ personas los asigna el equipo. Confirmaremos la mejor mesa por WhatsApp tras el pago.',
+  'w.payTitle':'Paga con PIX para confirmar','w.payScan':'Escanea el QR o copia la clave de abajo','w.copyKey':'Copiar clave PIX','w.copied':'Clave copiada ✓','w.paid':'Ya pagué (simular) ✓',
+  'w.payNote':'Pago 100% por adelantado. Si cancelas con 24h de antelación, generamos un crédito para otra fecha.',
+  'w.resv':'Reserva','w.event':'Evento','w.signal':'Seña de la reserva','w.total':'Total','w.onName':'A nombre de','w.dateTime':'Fecha / horario',
+  'w.confirmed':'¡Reserva confirmada!','w.confirmedSub':'Enviamos la confirmación y el comprobante a tu WhatsApp.','w.code':'Código','w.payment':'Pago','w.payPaid':'Pagado','w.toHome':'Volver al inicio','w.seeWa':'Ver en WhatsApp ↓','w.online':'en línea',
+  'side.dash':'Resumen','side.resv':'Reservas','side.events':'Eventos','side.clients':'Clientes','side.menu':'Carta','side.soon':'Próximas fases','side.orders':'Pedidos','side.kitchen':'Cocina','side.stock':'Inventario','side.soonTag':'pronto',
+  'a.overview':'Resumen','a.daySummary':'resumen del día','a.seeAgenda':'Ver agenda','a.openSite':'Abrir sitio del cliente',
+  'a.resvToday':'Reservas hoy','a.guests':'Comensales','a.occ':'Ocupación','a.revenue':'Ingresos (PIX)','a.vsYest':'+3 vs. ayer','a.lunchDinner':'almuerzo + cena','a.goal':'meta 75%','a.advance':'anticipado',
+  'a.todayAgenda':'Agenda de hoy','a.activeResv':'reservas activas','a.nextEvent':'Próximo evento','a.soldSeats':'Plazas vendidas','a.expRevenue':'Ingresos previstos','a.attention':'Atención','a.waitingPix':'⏳ Esperando PIX','a.noshowToday':'⚠️ No-show hoy','a.freeTables':'🪑 Mesas libres ahora','a.oneResv':'reserva','a.oneClient':'cliente',
+  'a.manageResv':'Gestiona la agenda, confirma pagos y marca llegadas','a.newResv':'+ Nueva reserva','a.today':'Hoy','a.week':'Semana','a.calendar':'Calendario',
+  'th.client':'Cliente','th.time':'Hora','th.pax':'Pax','th.table':'Mesa','th.amb':'Ambiente','th.value':'Importe','th.status':'Estado',
+  'a.eventsSub':'Crea eventos con menú exclusivo y precio especial; controla las plazas','a.newEvent':'+ Nuevo evento','th.event':'Evento','th.date':'Fecha','th.type':'Tipo','th.price':'Precio','th.seats':'Plazas','th.occ':'Ocupación','th.expRev':'Ingresos previstos',
+  'a.clientsSub':'Historial de visitas, faltas y confiabilidad — identificados por CPF','a.export':'Exportar','th.phone':'Teléfono','th.visits':'Visitas','th.noshows':'No-shows','th.trust':'Confiabilidad','th.last':'Última visita','th.tags':'Marcadores',
+  'a.menuSub':'Edita platos, precios y disponibilidad — se refleja en el sitio del cliente','a.addItem':'+ Añadir ítem','a.items':'ítems','a.available':'Disponible','a.soldout':'Agotado','a.edit':'Editar',
+  'm.status':'Estado','m.dateTime':'Fecha / horario','m.people':'Personas','m.tableAmb':'Mesa / ambiente','m.payment':'Pago','m.phone':'Teléfono','m.cpf':'CPF','m.notes':'Observaciones','m.close':'Cerrar','m.confirmPay':'Confirmar pago','m.markArrived':'Marcar llegada','m.markSeated':'Marcar como sentado','m.paid':'Pagado','m.pending':'Pendiente','m.via':'vía PIX',
+  'st.seated':'Sentado','st.paid':'Pagado','st.pending':'Pendiente','st.noshow':'No-show','st.cancel':'Cancelada',
+  'turn.lunch':'Almuerzo','turn.dinner':'Cena','footer':'Aurora · Rua das Laranjeiras, 120 — Río de Janeiro · (21) 99999-0000 · <span class="muted">Prototipo de demostración — ningún pago real es procesado.</span>',
+  'weekFull':['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+  'weekShort':['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],'monShort':['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'],
+  'monFull':['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
+ }
+};
+const t = k => T[L][k];
+const tr = o => (o && typeof o==='object') ? (o[L]||o.pt) : o;
+const fmt = n => 'R$ ' + n.toFixed(2).replace('.', ',');
+const TODAY = '2026-06-17';
+
+/* ===================== DATA ===================== */
+const AREAS=[
+ {id:'salao',ic:'🍷',nm:{pt:'Salão',es:'Salón'},ct:{pt:'Ambiente principal, climatizado',es:'Ambiente principal, climatizado'}},
+ {id:'varanda',ic:'🌿',nm:{pt:'Varanda',es:'Terraza'},ct:{pt:'Ao ar livre, vista jardim',es:'Al aire libre, vista al jardín'}},
+ {id:'eventos',ic:'✨',nm:{pt:'Salão de Eventos',es:'Salón de Eventos'},ct:{pt:'Reservado a grupos e eventos',es:'Reservado a grupos y eventos'}},
+];
+const areaNm=id=>tr(AREAS.find(a=>a.id===id).nm);
+const TABLES=[
+ {id:'S1',area:'salao',cap:2},{id:'S2',area:'salao',cap:2},{id:'S3',area:'salao',cap:4,busy:true},
+ {id:'S4',area:'salao',cap:4},{id:'S5',area:'salao',cap:4},{id:'S6',area:'salao',cap:6,busy:true},
+ {id:'S7',area:'salao',cap:6},{id:'S8',area:'salao',cap:2},
+ {id:'V1',area:'varanda',cap:2},{id:'V2',area:'varanda',cap:4},{id:'V3',area:'varanda',cap:4,busy:true},
+ {id:'V4',area:'varanda',cap:6},{id:'V5',area:'varanda',cap:8},
+ {id:'E1',area:'eventos',cap:10},{id:'E2',area:'eventos',cap:12},
+];
+const EVENTS=[
+ {id:'ev1',nm:'Noite de Samba ao Vivo',iso:'2026-06-21',d:21,mon:'JUN',cap:60,left:14,price:120,
+  type:{pt:'Música ao vivo',es:'Música en vivo'},dateLbl:{pt:'Sábado, 21 jun · 20h',es:'Sábado, 21 jun · 20h'},
+  desc:{pt:'Roda de samba com a banda da casa e menu de petiscos especial.',es:'Rueda de samba con la banda de la casa y menú de tapas especial.'},
+  menu:{pt:'Couvert musical + menu de petiscos harmonizado',es:'Couvert musical + menú de tapas armonizado'}},
+ {id:'ev2',nm:'Jantar Harmonizado',iso:'2026-06-27',d:27,mon:'JUN',cap:30,left:6,price:280,
+  type:{pt:'Degustação',es:'Degustación'},dateLbl:{pt:'Sexta, 27 jun · 19h30',es:'Viernes, 27 jun · 19:30'},
+  desc:{pt:'Cinco tempos do chef harmonizados com vinhos selecionados.',es:'Cinco tiempos del chef armonizados con vinos seleccionados.'},
+  menu:{pt:'Menu degustação 5 tempos + harmonização de vinhos',es:'Menú degustación 5 tiempos + armonización de vinos'}},
+ {id:'ev3',nm:'Feijoada de Sábado',iso:'2026-07-05',d:5,mon:'JUL',cap:80,left:42,price:95,
+  type:{pt:'Almoço temático',es:'Almuerzo temático'},dateLbl:{pt:'Sábado, 5 jul · 12h',es:'Sábado, 5 jul · 12h'},
+  desc:{pt:'A tradicional feijoada completa da Aurora, à vontade.',es:'La tradicional feijoada completa de Aurora, a discreción.'},
+  menu:{pt:'Feijoada completa + caipirinha de cortesia',es:'Feijoada completa + caipiriña de cortesía'}},
+ {id:'ev4',nm:'Degustação de Vinhos',iso:'2026-07-12',d:12,mon:'JUL',cap:24,left:24,price:190,
+  type:{pt:'Degustação',es:'Degustación'},dateLbl:{pt:'Sábado, 12 jul · 19h',es:'Sábado, 12 jul · 19h'},
+  desc:{pt:'Seis rótulos guiados por sommelier, com tábua de frios.',es:'Seis etiquetas guiadas por sommelier, con tabla de fiambres.'},
+  menu:{pt:'6 vinhos + tábua de frios artesanais',es:'6 vinos + tabla de fiambres artesanales'}},
+];
+const MENU=[
+ {cat:{pt:'Entradas',es:'Entradas'},items:[
+  {nm:'Coxinha de costela',pr:18,desc:{pt:'Massa cremosa, costela desfiada',es:'Masa cremosa, costilla desmechada'}},
+  {nm:'Pão de queijo da casa',pr:16,veg:true,desc:{pt:'Porção com 6 unidades',es:'Porción de 6 unidades'}},
+  {nm:'Bolinho de bacalhau',pr:38,desc:{pt:'Porção com 8 unidades',es:'Porción de 8 unidades'}},
+  {nm:'Dadinho de tapioca',pr:26,veg:true,hot:true,desc:{pt:'Geleia de pimenta',es:'Mermelada de pimienta'}},
+ ]},
+ {cat:{pt:'Pratos principais',es:'Platos principales'},items:[
+  {nm:'Feijoada completa',pr:78,desc:{pt:'Acompanhamentos tradicionais',es:'Guarniciones tradicionales'}},
+  {nm:'Moqueca de camarão',pr:96,desc:{pt:'Leite de coco, dendê, pirão',es:'Leche de coco, dendê, pirão'}},
+  {nm:'Picanha na brasa',pr:110,desc:{pt:'350g, farofa e vinagrete',es:'350g, farofa y vinagreta'}},
+  {nm:'Bobó de camarão',pr:88,desc:{pt:'Mandioca, arroz branco',es:'Mandioca, arroz blanco'}},
+  {nm:'Risoto de palmito',pr:64,veg:true,desc:{pt:'Palmito pupunha fresco',es:'Palmito pupunha fresco'}},
+  {nm:'Frango com quiabo',pr:58,out:true,desc:{pt:'Esgotado hoje',es:'Agotado hoy'}},
+ ]},
+ {cat:{pt:'Sobremesas',es:'Postres'},items:[
+  {nm:'Pudim de leite',pr:22,veg:true,desc:{pt:'Receita da casa',es:'Receta de la casa'}},
+  {nm:'Brigadeiro gourmet',pr:24,veg:true,desc:{pt:'Trio de sabores',es:'Trío de sabores'}},
+  {nm:'Petit gateau',pr:28,veg:true,desc:{pt:'Sorvete de creme',es:'Helado de crema'}},
+ ]},
+ {cat:{pt:'Bebidas',es:'Bebidas'},items:[
+  {nm:'Caipirinha',pr:28,desc:{pt:'Cachaça artesanal',es:'Cachaza artesanal'}},
+  {nm:'Suco natural',pr:14,veg:true,desc:{pt:'Laranja, maracujá, abacaxi',es:'Naranja, maracuyá, piña'}},
+  {nm:'Guaraná / Refrigerante',pr:9,veg:true,desc:{pt:'Lata 350ml',es:'Lata 350ml'}},
+ ]},
+];
+let RESV=[
+ {id:'R-1042',nome:'Mariana Lopes',pax:2,hora:'12:30',turno:'lunch',area:'salao',mesa:'S1',status:'seated',valor:80,tel:'(21) 98888-1010',cpf:'123.456.789-00',pago:true,date:'2026-06-17',obs:{pt:'Aniversário',es:'Cumpleaños'}},
+ {id:'R-1043',nome:'Carlos Pereira',pax:5,hora:'13:00',turno:'lunch',area:'varanda',mesa:'V5',status:'paid',valor:200,tel:'(21) 97777-2020',cpf:'987.654.321-00',pago:true,date:'2026-06-17',obs:{pt:'Grupo — alocado pela casa',es:'Grupo — asignado por la casa'}},
+ {id:'R-1044',nome:'Júlia Andrade',pax:2,hora:'13:15',turno:'lunch',area:'salao',mesa:'S2',status:'noshow',valor:80,tel:'(21) 96666-3030',cpf:'111.222.333-44',pago:true,date:'2026-06-17',obs:{pt:'Histórico de faltas',es:'Historial de faltas'}},
+ {id:'R-1045',nome:'Rafael Mendes',pax:4,hora:'19:30',turno:'dinner',area:'salao',mesa:'S4',status:'paid',valor:160,tel:'(21) 95555-4040',cpf:'222.333.444-55',pago:true,date:'2026-06-17',obs:{pt:'Alergia a frutos do mar',es:'Alergia a mariscos'}},
+ {id:'R-1046',nome:'Bianca Rocha',pax:2,hora:'20:00',turno:'dinner',area:'varanda',mesa:'V1',status:'pending',valor:80,tel:'(21) 94444-5050',cpf:'333.444.555-66',pago:false,date:'2026-06-17',obs:{pt:'Aguardando PIX',es:'Esperando PIX'}},
+ {id:'R-1047',nome:'Thiago Nunes',pax:6,hora:'20:30',turno:'dinner',area:'salao',mesa:'S7',status:'paid',valor:240,tel:'(21) 93333-6060',cpf:'444.555.666-77',pago:true,date:'2026-06-17',obs:{pt:'Comemoração de trabalho',es:'Celebración de trabajo'}},
+ {id:'R-1048',nome:'Sofia Carvalho',pax:2,hora:'21:00',turno:'dinner',area:'salao',mesa:'S8',status:'cancel',valor:80,tel:'(21) 92222-7070',cpf:'555.666.777-88',pago:false,date:'2026-06-17',obs:{pt:'Cancelou (crédito gerado)',es:'Canceló (crédito generado)'}},
+ // semana
+ {id:'R-1051',nome:'Pedro Alves',pax:4,hora:'20:00',turno:'dinner',area:'salao',mesa:'S5',status:'paid',valor:160,tel:'(21) 90000-1111',cpf:'—',pago:true,date:'2026-06-18',obs:''},
+ {id:'R-1052',nome:'Luana Dias',pax:2,hora:'13:00',turno:'lunch',area:'varanda',mesa:'V2',status:'paid',valor:80,tel:'(21) 90000-2222',cpf:'—',pago:true,date:'2026-06-18',obs:''},
+ {id:'R-1053',nome:'Família Souza',pax:8,hora:'21:00',turno:'dinner',area:'eventos',mesa:'E1',status:'paid',valor:320,tel:'(21) 90000-3333',cpf:'—',pago:true,date:'2026-06-19',obs:{pt:'Grupo grande',es:'Grupo grande'}},
+ {id:'R-1054',nome:'Camila Reis',pax:2,hora:'19:30',turno:'dinner',area:'salao',mesa:'S1',status:'paid',valor:80,tel:'(21) 90000-4444',cpf:'—',pago:true,date:'2026-06-19',obs:''},
+ {id:'R-1055',nome:'Bruno Teixeira',pax:6,hora:'20:30',turno:'dinner',area:'salao',mesa:'S7',status:'paid',valor:240,tel:'(21) 90000-5555',cpf:'—',pago:true,date:'2026-06-20',obs:''},
+ {id:'R-1056',nome:'Aline Castro',pax:4,hora:'13:30',turno:'lunch',area:'varanda',mesa:'V4',status:'paid',valor:160,tel:'(21) 90000-6666',cpf:'—',pago:true,date:'2026-06-20',obs:''},
+ {id:'R-1057',nome:'Evento: Noite de Samba',pax:60,hora:'20:00',turno:'dinner',area:'eventos',mesa:'—',status:'paid',valor:7200,tel:'—',cpf:'—',pago:true,date:'2026-06-21',obs:{pt:'46 lugares vendidos',es:'46 plazas vendidas'}},
+];
+const STMAP={seated:'blue',paid:'green',pending:'amber',noshow:'red',cancel:'gray'};
+const CLIENTS=[
+ {nome:'Mariana Lopes',visitas:14,faltas:0,rate:5,tel:'(21) 98888-1010',ult:{pt:'Hoje',es:'Hoy'},tags:[{pt:'VIP',es:'VIP'},{pt:'Aniversariante',es:'Cumpleañera'}]},
+ {nome:'Thiago Nunes',visitas:9,faltas:0,rate:5,tel:'(21) 93333-6060',ult:{pt:'Hoje',es:'Hoy'},tags:[{pt:'Frequente',es:'Frecuente'}]},
+ {nome:'Rafael Mendes',visitas:6,faltas:1,rate:4,tel:'(21) 95555-4040',ult:{pt:'Hoje',es:'Hoy'},tags:[{pt:'Alergia: frutos do mar',es:'Alergia: mariscos'}]},
+ {nome:'Carlos Pereira',visitas:5,faltas:0,rate:5,tel:'(21) 97777-2020',ult:{pt:'Hoje',es:'Hoy'},tags:[{pt:'Grupos',es:'Grupos'}]},
+ {nome:'Luana Dias',visitas:4,faltas:0,rate:5,tel:'(21) 90000-2222',ult:{pt:'Ontem',es:'Ayer'},tags:[{pt:'Frequente',es:'Frecuente'}]},
+ {nome:'Júlia Andrade',visitas:3,faltas:2,rate:2,tel:'(21) 96666-3030',ult:{pt:'Hoje',es:'Hoy'},tags:[{pt:'Risco de no-show',es:'Riesgo de no-show'}]},
+];
+
+/* ===================== MODE / LANG ===================== */
+let curAdmin='dash';
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n)});
+  document.getElementById('footer-txt').innerHTML=t('footer');
+  document.documentElement.lang = L==='pt'?'pt-BR':'es';
+}
+function setLang(l){
+  L=l;
+  document.getElementById('l-pt').classList.toggle('on',l==='pt');
+  document.getElementById('l-es').classList.toggle('on',l==='es');
+  applyI18n(); renderClient();
+  if(!document.getElementById('c-resv').classList.contains('hidden')) renderResv();
+  if(document.getElementById('admin').style.display==='block') ago(curAdmin);
+}
+function setMode(m){
+  document.getElementById('client').style.display=m==='client'?'flex':'none';
+  document.getElementById('admin').style.display=m==='admin'?'block':'none';
+  document.getElementById('m-client').classList.toggle('on',m==='client');
+  document.getElementById('m-admin').classList.toggle('on',m==='admin');
+  window.scrollTo(0,0); if(m==='admin') ago(curAdmin);
+}
+function cgo(v){
+  document.querySelectorAll('.cview').forEach(e=>e.classList.add('hidden'));
+  document.getElementById('c-'+v).classList.remove('hidden');
+  document.querySelectorAll('.cnav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
+  window.scrollTo(0,0);
+}
+
+/* ===================== CLIENT ===================== */
+function eventTeaser(ev){
+  return `<div class="card evcard">
+    <div class="top"><div class="date"><b>${ev.d}</b><span>${ev.mon}</span></div>
+      <span class="pill" style="background:rgba(255,255,255,.9);color:var(--wine)">${tr(ev.type)}</span></div>
+    <div class="body"><h3>${ev.nm}</h3><div class="tiny" style="margin-bottom:8px">${tr(ev.dateLbl)}</div>
+      <p style="font-size:14px;color:var(--muted);margin-bottom:12px">${tr(ev.desc)}</p>
+      <div style="text-align:center;padding:9px;border:1.5px dashed var(--line);border-radius:30px;color:var(--muted);font-weight:600;font-size:13px">🔔 ${t('card.soon')}</div>
+    </div></div>`;
+}
+function renderClient(){
+  document.getElementById('home-events').innerHTML=EVENTS.slice(0,3).map(eventTeaser).join('');
+}
+
+/* ===================== WIZARD ===================== */
+let R={};
+function startResv(evId){
+  R={step:1,date:'2026-06-20',turno:'dinner',hora:'20:00',pax:2,area:'salao',mesa:null,
+     nome:'',cpf:'',tel:'',email:'',obs:'',consent:false,event:evId?EVENTS.find(e=>e.id===evId):null};
+  cgo('resv'); renderResv();
+}
+const TOTAL_STEPS=4;
+const priceOf=()=> R.event ? R.event.price*R.pax : 40*R.pax;
+function renderResv(){
+  document.getElementById('resv-title').textContent = R.event ? (t('w.event')+' · '+R.event.nm) : t('w.bookTable');
+  document.getElementById('resv-steps').innerHTML=Array.from({length:TOTAL_STEPS},(_,i)=>`<div class="s ${i<R.step?'done':''}"></div>`).join('');
+  const b=document.getElementById('resv-body');
+  b.innerHTML = R.step===1?step1():R.step===2?step2():R.step===3?step3():R.step===4?step4():stepDone();
+  window.scrollTo(0,0);
+}
+function step1(){
+  const horas=R.turno==='lunch'?['12:00','12:30','13:00','13:30','14:30']:['18:30','19:00','19:30','20:00','20:30','21:30'];
+  return `<div class="step">
+    ${R.event?`<div class="note">✨ <span>${t('w.event')} <b>${R.event.nm}</b> — ${tr(R.event.dateLbl)}.</span></div><br>`:''}
+    <div class="row">
+      <div class="field"><label>${t('w.date')}</label><input type="date" value="${R.date}" min="2026-06-18" ${R.event?'disabled':''} onchange="R.date=this.value"></div>
+      <div class="field"><label>${t('w.people')}</label><select onchange="R.pax=+this.value;renderResv()">${[1,2,3,4,5,6,7,8].map(n=>`<option ${n===R.pax?'selected':''}>${n}</option>`).join('')}</select></div>
+    </div>
+    ${!R.event?`<div class="field"><label>${t('w.turn')}</label><div class="chips">
+      <button class="chip ${R.turno==='lunch'?'on':''}" onclick="R.turno='lunch';R.hora=null;renderResv()">${t('w.lunch')} (12h–16h)</button>
+      <button class="chip ${R.turno==='dinner'?'on':''}" onclick="R.turno='dinner';R.hora=null;renderResv()">${t('w.dinner')} (18h–23h)</button></div></div>
+    <div class="field"><label>${t('w.time')}</label><div class="chips">
+      ${horas.map(h=>`<button class="chip ${R.hora===h?'on':''}" onclick="R.hora='${h}';renderResv()">${h}</button>`).join('')}</div></div>`:''}
+    ${R.pax>=5&&!R.event?`<div class="note">👥 <span>${t('w.groupNote')}</span></div>`:''}
+    <div class="foot" style="margin:18px -26px -26px;padding:18px 26px">
+      <button class="btn ghost" onclick="cgo('home')">${t('w.cancel')}</button>
+      <button class="btn" ${(!R.hora&&!R.event)?'disabled':''} onclick="R.step=2;renderResv()">${t('w.continue')}</button>
+    </div></div>`;
+}
+function step2(){
+  const tbls=TABLES.filter(x=>x.area===R.area&&x.cap>=R.pax);
+  return `<div class="step">
+    <div class="field"><label>${t('w.ambience')}</label><div class="area-grid">
+      ${AREAS.map(a=>`<div class="area ${R.area===a.id?'on':''}" onclick="R.area='${a.id}';R.mesa=null;renderResv()">
+        <div class="ic">${a.ic}</div><div class="nm">${tr(a.nm)}</div><div class="ct">${tr(a.ct)}</div></div>`).join('')}</div></div>
+    <div class="field"><label>${t('w.chooseTable')} <span class="tiny">(${t('w.cap')} ${R.pax})</span></label>
+      <div class="tables">${tbls.length?tbls.map(x=>`<button class="tbl ${x.busy?'busy':''} ${R.mesa===x.id?'on':''}" ${x.busy?'disabled':''} onclick="R.mesa='${x.id}';renderResv()"><b>${x.id}</b><span class="cap">${x.cap} ${t('w.seats')}</span></button>`).join(''):`<div class="tiny">${t('w.noTables')}</div>`}</div>
+      <div class="tiny" style="margin-top:8px">${t('w.legend')}</div></div>
+    <div class="foot" style="margin:18px -26px -26px;padding:18px 26px">
+      <button class="btn ghost" onclick="R.step=1;renderResv()">${t('w.back')}</button>
+      <button class="btn" ${!R.mesa?'disabled':''} onclick="R.step=3;renderResv()">${t('w.continue')}</button></div></div>`;
+}
+function step3(){
+  return `<div class="step">
+    <div class="field"><label>${t('w.name')} *</label><input value="${R.nome}" oninput="R.nome=this.value" placeholder="${t('w.namePh')}"></div>
+    <div class="row">
+      <div class="field"><label>${t('w.cpf')} *</label><input value="${R.cpf}" oninput="R.cpf=this.value" placeholder="000.000.000-00"></div>
+      <div class="field"><label>${t('w.phone')} *</label><input value="${R.tel}" oninput="R.tel=this.value" placeholder="(21) 90000-0000"></div></div>
+    <div class="field"><label>${t('w.email')}</label><input value="${R.email}" oninput="R.email=this.value" placeholder="email@email.com"></div>
+    <div class="field"><label>${t('w.notes')}</label><textarea rows="2" oninput="R.obs=this.value" placeholder="${t('w.notesPh')}">${R.obs}</textarea></div>
+    <label class="consent"><input type="checkbox" ${R.consent?'checked':''} onchange="R.consent=this.checked;document.getElementById('go3').disabled=!this.checked">
+      <span>${t('w.consent')}</span></label>
+    <div class="foot" style="margin:18px -26px -26px;padding:18px 26px">
+      <button class="btn ghost" onclick="R.step=2;renderResv()">${t('w.back')}</button>
+      <button class="btn" id="go3" ${R.consent?'':'disabled'} onclick="if(R.nome&&R.cpf&&R.tel){R.step=4;renderResv()}else{alert(t('w.fill'))}">${t('w.toPay')}</button></div></div>`;
+}
+function dtLbl(){ return R.event?tr(R.event.dateLbl):fmtDate(R.date)+' · '+R.hora; }
+function step4(){
+  return `<div class="step">
+    <div class="summary">
+      <div class="ln"><span class="muted">${R.event?t('w.event'):t('w.resv')}</span><span>${R.event?R.event.nm:'Mesa '+R.mesa+' · '+areaNm(R.area)}</span></div>
+      <div class="ln"><span class="muted">${t('w.dateTime')}</span><span>${dtLbl()}</span></div>
+      <div class="ln"><span class="muted">${t('w.people')}</span><span>${R.pax}</span></div>
+      <div class="ln"><span class="muted">${t('w.onName')}</span><span>${R.nome||'—'}</span></div>
+      <div class="ln total"><span>${R.event?t('w.total'):t('w.signal')}</span><span>${fmt(priceOf())}</span></div></div>
+    <div class="pix"><p style="font-weight:600;margin-bottom:6px">${t('w.payTitle')}</p>
+      <p class="tiny" style="margin-bottom:6px">${t('w.payScan')}</p>${qrSvg()}
+      <div class="pixkey">00020126aurora-pix-${(R.cpf||'cliente').slice(0,6)}-${R.pax}p5204000053039865802BR</div>
+      <button class="btn alt sm" style="margin-top:10px" onclick="this.textContent=t('w.copied')">${t('w.copyKey')}</button></div>
+    <div class="note" style="margin-top:16px">🔒 <span>${t('w.payNote')}</span></div>
+    <div class="foot" style="margin:18px -26px -26px;padding:18px 26px">
+      <button class="btn ghost" onclick="R.step=3;renderResv()">${t('w.back')}</button>
+      <button class="btn" onclick="R.step=5;saveReservation();renderResv()">${t('w.paid')}</button></div></div>`;
+}
+function stepDone(){
+  const target=R.event?R.event.nm:R.mesa+' · '+areaNm(R.area);
+  const wa = (L==='pt'
+    ? `✅ *Reserva confirmada — Aurora*\nOlá ${R.nome||'cliente'}! Sua reserva está garantida.\n📅 ${dtLbl()}\n🪑 ${target}\n👥 ${R.pax} pessoas\n💳 ${fmt(priceOf())} pago via PIX\nCódigo: R-1049\nAté breve! 🍷`
+    : `✅ *Reserva confirmada — Aurora*\n¡Hola ${R.nome||'cliente'}! Tu reserva está garantizada.\n📅 ${dtLbl()}\n🪑 ${target}\n👥 ${R.pax} personas\n💳 ${fmt(priceOf())} pagado vía PIX\nCódigo: R-1049\n¡Hasta pronto! 🍷`);
+  return `<div class="confirm">
+    <div class="big">✓</div><h2 style="color:var(--wine)">${t('w.confirmed')}</h2>
+    <p class="muted" style="margin:8px 0 6px">${t('w.confirmedSub')}</p>
+    <div class="summary" style="text-align:left">
+      <div class="ln"><span class="muted">${t('w.code')}</span><span><b>R-1049</b></span></div>
+      <div class="ln"><span class="muted">${R.event?t('w.event'):'Mesa'}</span><span>${target}</span></div>
+      <div class="ln"><span class="muted">${t('w.dateTime')}</span><span>${dtLbl()}</span></div>
+      <div class="ln"><span class="muted">${t('w.people')}</span><span>${R.pax}</span></div>
+      <div class="ln"><span class="muted">${t('w.payment')}</span><span><span class="pill green">${t('w.payPaid')} · ${fmt(priceOf())}</span></span></div></div>
+    <div class="tiny" style="margin-top:14px">${t('w.seeWa')}</div>
+    <div class="phone"><div class="scr">
+      <div class="wahead"><div class="ava">A</div><div><div>Aurora</div><div style="font-size:10px;color:#8aa6a0">${t('w.online')}</div></div>
+        <span style="margin-left:auto;color:var(--wa);font-size:18px">✆</span></div>
+      <div class="chat"><div class="bubble">${wa.replace(/\*(.+?)\*/g,'<b>$1</b>')}<div class="bt">14:32 ✓✓</div></div></div>
+    </div></div>
+    <button class="btn" style="margin-top:18px" onclick="cgo('home')">${t('w.toHome')}</button></div>`;
+}
+function fmtDate(iso){const [y,m,d]=iso.split('-');return `${+d} ${t('monShort')[+m-1]} ${y}`;}
+function qrSvg(){
+  let cells='';const grid=11;const seed=[1,0,1,1,0,1,0,0,1,1,0,1,1,0,0,1,0,1,1,0,1,0];
+  for(let y=0;y<grid;y++)for(let x=0;x<grid;x++){const on=(seed[(x*3+y*5)%seed.length])^((x+y)%3===0?1:0);if(on)cells+=`<rect x="${x*16}" y="${y*16}" width="16" height="16"/>`;}
+  const fp=(ox,oy)=>`<rect x="${ox}" y="${oy}" width="48" height="48" fill="none" stroke="#000" stroke-width="8"/><rect x="${ox+16}" y="${oy+16}" width="16" height="16"/>`;
+  return `<svg class="qr" viewBox="0 0 176 176" xmlns="http://www.w3.org/2000/svg"><rect width="176" height="176" fill="#fff"/><g fill="#000">${cells}${fp(8,8)}${fp(120,8)}${fp(8,120)}</g></svg>`;
+}
+
+/* ===================== ADMIN ===================== */
+function ago(v){
+  curAdmin=v;
+  document.querySelectorAll('.side a[data-av]').forEach(a=>a.classList.toggle('on',a.dataset.av===v));
+  const m=document.getElementById('admin-main');
+  m.innerHTML = v==='dash'?adminDash():v==='resv'?adminResv():v==='events'?adminEvents():v==='clients'?adminClients():adminMenu();
+  m.scrollTop=0;
+}
+function topline(h,s,actions=''){return `<div class="topline"><div><h2>${h}</h2><div class="sub">${s}</div></div><div class="actions">${actions}</div></div>`;}
+function dowFull(iso){const dt=new Date(iso+'T12:00:00');return t('weekFull')[dt.getDay()];}
+const todayResv=()=>RESV.filter(r=>r.date===TODAY);
+
+function adminDash(){
+  const day=todayResv();
+  const pago=day.filter(r=>r.pago).reduce((a,r)=>a+r.valor,0);
+  const pax=day.filter(r=>r.status!=='cancel').reduce((a,r)=>a+r.pax,0);
+  const ativas=day.filter(r=>!['cancel','noshow'].includes(r.status)).length;
+  const ocup=Math.round(pax/(TABLES.reduce((a,x)=>a+x.cap,0))*100);
+  return topline(t('a.overview'),dowFull(TODAY)+', 17 '+t('monShort')[5]+' 2026 · '+t('a.daySummary'),
+     `<button class="btn sm alt" onclick="ago('resv')">${t('a.seeAgenda')}</button><button class="btn sm" onclick="setMode('client')">${t('a.openSite')}</button>`)
+   +`<div class="kpis">
+      ${kpi(t('a.resvToday'),ativas,t('a.vsYest'),'up',70)}
+      ${kpi(t('a.guests'),pax,t('a.lunchDinner'),'up',Math.min(pax,100))}
+      ${kpi(t('a.occ'),ocup+'%',t('a.goal'),ocup>=75?'up':'down',ocup)}
+      ${kpi(t('a.revenue'),fmt(pago),t('a.advance'),'up',64)}</div>
+     <div class="twocol">
+       <div class="panel"><div class="ph"><h3>${t('a.todayAgenda')}</h3><div class="actions"><span class="tiny">${ativas} ${t('a.activeResv')}</span></div></div><div class="pb">${timeline()}</div></div>
+       <div>
+        <div class="panel"><div class="ph"><h3>${t('a.nextEvent')}</h3></div><div class="pb">
+          <div style="padding:6px 0"><b class="serif" style="font-size:17px">${EVENTS[0].nm}</b><div class="tiny">${tr(EVENTS[0].dateLbl)}</div>
+          <div class="kv" style="margin-top:8px"><span class="k">${t('a.soldSeats')}</span><span>${EVENTS[0].cap-EVENTS[0].left} / ${EVENTS[0].cap}</span></div>
+          <div class="bar" style="height:7px;background:var(--line);border-radius:5px;overflow:hidden"><i style="display:block;height:100%;background:var(--terra);width:${Math.round((EVENTS[0].cap-EVENTS[0].left)/EVENTS[0].cap*100)}%"></i></div>
+          <div class="kv"><span class="k">${t('a.expRevenue')}</span><span>${fmt((EVENTS[0].cap-EVENTS[0].left)*EVENTS[0].price)}</span></div></div></div></div>
+        <div class="panel"><div class="ph"><h3>${t('a.attention')}</h3></div><div class="pb">
+          <div class="kv"><span class="k">${t('a.waitingPix')}</span><span class="pill amber">1 ${t('a.oneResv')}</span></div>
+          <div class="kv"><span class="k">${t('a.noshowToday')}</span><span class="pill red">1 ${t('a.oneClient')}</span></div>
+          <div class="kv"><span class="k">${t('a.freeTables')}</span><span class="pill green">8</span></div></div></div>
+       </div></div>`;
+}
+function kpi(lbl,val,delta,dir,pct){return `<div class="kpi"><div class="lbl">${lbl}</div><div class="val">${val}</div><div class="delta ${dir}">${dir==='up'?'▲':'▼'} ${delta}</div><div class="bar"><i style="width:${pct}%"></i></div></div>`;}
+function timeline(){
+  const slots={};todayResv().filter(r=>r.status!=='cancel').forEach(r=>{(slots[r.hora]=slots[r.hora]||[]).push(r)});
+  return Object.keys(slots).sort().map(h=>`<div class="slot"><div class="time">${h}</div><div class="items">
+    ${slots[h].map(r=>`<div class="rchip" onclick="openResv('${r.id}')"><span class="dot ${r.status}"></span>${r.nome} · ${r.pax}p · ${r.mesa}</div>`).join('')}</div></div>`).join('');
+}
+
+let resvTab='today', calMonth=5, calYear=2026;
+function adminResv(){
+  let body='';
+  if(resvTab==='today') body=resvTable(todayResv());
+  else if(resvTab==='week') body=resvWeek();
+  else body=resvCalendar();
+  return topline(t('side.resv'),t('a.manageResv'),`<button class="btn sm">${t('a.newResv')}</button>`)
+   +`<div class="panel"><div class="ph"><div class="seg2">
+       <button class="${resvTab==='today'?'on':''}" onclick="resvTab='today';ago('resv')">${t('a.today')}</button>
+       <button class="${resvTab==='week'?'on':''}" onclick="resvTab='week';ago('resv')">${t('a.week')}</button>
+       <button class="${resvTab==='cal'?'on':''}" onclick="resvTab='cal';ago('resv')">${t('a.calendar')}</button></div>
+       <div class="actions"><span class="tiny">${dowFull(TODAY)}, 17 ${t('monShort')[5]} 2026</span></div></div>
+     <div class="pb">${body}</div></div>`;
+}
+function resvTable(list){
+  return `<table><thead><tr><th>${t('th.client')}</th><th>${t('th.time')}</th><th>${t('th.pax')}</th><th>${t('th.table')}</th><th>${t('th.amb')}</th><th>${t('th.value')}</th><th>${t('th.status')}</th><th></th></tr></thead>
+   <tbody>${list.map(r=>`<tr class="clk" onclick="openResv('${r.id}')">
+     <td><div class="who"><div class="av">${r.nome[0]}</div><div><b>${r.nome}</b><div class="tiny">${r.id}${r.obs?' · '+tr(r.obs):''}</div></div></div></td>
+     <td>${r.hora}<div class="tiny">${t('turn.'+r.turno)}</div></td><td>${r.pax}</td><td><b>${r.mesa}</b></td><td>${areaNm(r.area)}</td>
+     <td>${fmt(r.valor)}<div class="tiny">${r.pago?t('m.paid').toLowerCase():t('m.pending').toLowerCase()}</div></td>
+     <td><span class="pill ${STMAP[r.status]}">${t('st.'+r.status)}</span></td><td class="tiny">›</td></tr>`).join('')}</tbody></table>`;
+}
+function resvWeek(){
+  let out='';
+  for(let i=0;i<7;i++){
+    const dt=new Date('2026-06-17T12:00:00');dt.setDate(dt.getDate()+i);
+    const iso=dt.toISOString().slice(0,10);
+    const list=RESV.filter(r=>r.date===iso&&r.status!=='cancel');
+    const ev=EVENTS.find(e=>e.iso===iso);
+    out+=`<div style="margin:10px 0 4px"><b class="serif" style="color:var(--wine)">${t('weekFull')[dt.getDay()]}, ${dt.getDate()} ${t('monShort')[dt.getMonth()]}</b>
+      ${i===0?' <span class="pill amber">'+t('a.today')+'</span>':''} ${ev?'<span class="pill blue">🎉 '+ev.nm+'</span>':''}
+      <span class="tiny" style="margin-left:6px">${list.length} ${t('a.activeResv')}</span></div>`;
+    out+= list.length? `<div class="slot" style="border:none;flex-wrap:wrap"><div class="items">${list.map(r=>`<div class="rchip" onclick="openResv('${r.id}')"><span class="dot ${r.status}"></span>${r.hora} · ${r.nome} · ${r.pax}p</div>`).join('')}</div></div>`
+      : `<div class="tiny" style="padding:2px 0 8px">—</div>`;
+  }
+  return out;
+}
+function resvCalendar(){
+  const first=new Date(calYear,calMonth,1);
+  const start=first.getDay();
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  let cells='';
+  for(let i=0;i<start;i++) cells+=`<div class="cell out"></div>`;
+  for(let d=1;d<=dim;d++){
+    const iso=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const cnt=calCount(iso); const ev=EVENTS.find(e=>e.iso===iso);
+    cells+=`<div class="cell ${iso===TODAY?'today':''}"><div class="dn">${d}</div>
+      ${cnt?`<div class="cnt">${cnt}</div>`:''}${ev?`<div class="ev">🎉 ${ev.nm}</div>`:''}</div>`;
+  }
+  const dows=t('weekShort').map(d=>`<div class="dow">${d}</div>`).join('');
+  return `<div class="cal"><div style="display:flex;justify-content:center;margin:6px 0 14px"><div class="nav">
+      <button onclick="calStep(-1)">‹</button><b>${t('monFull')[calMonth]} ${calYear}</b><button onclick="calStep(1)">›</button></div></div>
+    <div class="cgrid">${dows}${cells}</div>
+    <div class="tiny" style="margin-top:10px"><span class="cnt" style="position:static">n</span> ${L==='pt'?'reservas no dia':'reservas del día'} · 🎉 ${L==='pt'?'evento':'evento'}</div></div>`;
+}
+function calStep(n){calMonth+=n;if(calMonth<0){calMonth=11;calYear--}if(calMonth>11){calMonth=0;calYear++}ago('resv');}
+function calCount(iso){
+  const real=RESV.filter(r=>r.date===iso&&r.status!=='cancel').length;
+  if(real) return real;
+  const dt=new Date(iso+'T12:00:00'); const dow=dt.getDay();
+  if(dt<new Date('2026-06-17T00:00:00')) return 0; // passado: sem ruído
+  const base=(dow===5||dow===6)?9:(dow===0?6:4);
+  return base + (dt.getDate()%3);
+}
+function adminEvents(){
+  return topline(t('side.events'),t('a.eventsSub'),`<button class="btn sm">${t('a.newEvent')}</button>`)
+   +`<div class="panel"><div class="pb"><table>
+      <thead><tr><th>${t('th.event')}</th><th>${t('th.date')}</th><th>${t('th.type')}</th><th>${t('th.price')}</th><th>${t('th.seats')}</th><th>${t('th.occ')}</th><th>${t('th.expRev')}</th></tr></thead>
+      <tbody>${EVENTS.map(e=>{const sold=e.cap-e.left,pct=Math.round(sold/e.cap*100);return `<tr class="clk">
+        <td><b>${e.nm}</b><div class="tiny">${tr(e.menu)}</div></td><td>${tr(e.dateLbl).split(' · ')[0]}<div class="tiny">${tr(e.dateLbl).split(' · ')[1]||''}</div></td>
+        <td><span class="pill blue">${tr(e.type)}</span></td><td>${fmt(e.price)}</td><td>${sold}/${e.cap}</td>
+        <td style="min-width:120px"><div style="height:7px;background:var(--line);border-radius:5px;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:var(--terra)"></i></div><div class="tiny">${pct}%</div></td>
+        <td><b>${fmt(sold*e.price)}</b></td></tr>`}).join('')}</tbody></table></div></div>`;
+}
+function adminClients(){
+  return topline(t('side.clients'),t('a.clientsSub'),`<button class="btn sm alt">${t('a.export')}</button>`)
+   +`<div class="panel"><div class="pb"><table>
+      <thead><tr><th>${t('th.client')}</th><th>${t('th.phone')}</th><th>${t('th.visits')}</th><th>${t('th.noshows')}</th><th>${t('th.trust')}</th><th>${t('th.last')}</th><th>${t('th.tags')}</th></tr></thead>
+      <tbody>${CLIENTS.map(c=>`<tr class="clk">
+        <td><div class="who"><div class="av">${c.nome[0]}</div><b>${c.nome}</b></div></td>
+        <td class="muted">${c.tel}</td><td>${c.visitas}</td><td>${c.faltas>1?`<span class="pill red">${c.faltas}</span>`:c.faltas}</td>
+        <td><span class="stars">${'★'.repeat(c.rate)}${'☆'.repeat(5-c.rate)}</span></td><td class="muted">${tr(c.ult)}</td>
+        <td>${c.tags.map(tg=>`<span class="pill ${tr(tg).includes('VIP')?'amber':(tr(tg).toLowerCase().includes('risco')||tr(tg).toLowerCase().includes('riesgo'))?'red':'gray'}" style="margin:2px">${tr(tg)}</span>`).join('')}</td></tr>`).join('')}</tbody></table></div></div>`;
+}
+function adminMenu(){
+  return topline(t('side.menu'),t('a.menuSub'),`<button class="btn sm">${t('a.addItem')}</button>`)
+   +MENU.map(c=>`<div class="panel"><div class="ph"><h3>${tr(c.cat)}</h3><div class="actions tiny">${c.items.length} ${t('a.items')}</div></div>
+      <div class="pb"><table><tbody>${c.items.map(it=>`<tr>
+        <td><b>${it.nm}</b> ${it.veg?'<span class="badge veg">veg</span>':''}<div class="tiny">${tr(it.desc)}</div></td>
+        <td style="width:120px"><b>${fmt(it.pr)}</b></td>
+        <td style="width:130px">${it.out?`<span class="pill red">${t('a.soldout')}</span>`:`<span class="pill green">${t('a.available')}</span>`}</td>
+        <td style="width:80px" class="tiny"><a style="color:var(--wine);cursor:pointer">${t('a.edit')}</a></td></tr>`).join('')}</tbody></table></div></div>`).join('');
+}
+function openResv(id){
+  const r=RESV.find(x=>x.id===id);
+  document.getElementById('mod-title').textContent=r.nome+' · '+r.id;
+  document.getElementById('mod-body').innerHTML=`
+    <div class="kv"><span class="k">${t('m.status')}</span><span class="pill ${STMAP[r.status]}">${t('st.'+r.status)}</span></div>
+    <div class="kv"><span class="k">${t('m.dateTime')}</span><span>${fmtDate(r.date)} · ${r.hora} (${t('turn.'+r.turno)})</span></div>
+    <div class="kv"><span class="k">${t('m.people')}</span><span>${r.pax}</span></div>
+    <div class="kv"><span class="k">${t('m.tableAmb')}</span><span>${r.mesa} · ${areaNm(r.area)}</span></div>
+    <div class="kv"><span class="k">${t('m.payment')}</span><span>${r.pago?`<span class="pill green">${t('m.paid')}</span>`:`<span class="pill amber">${t('m.pending')}</span>`} ${fmt(r.valor)} ${t('m.via')}</span></div>
+    <div class="kv"><span class="k">${t('m.phone')}</span><span>${r.tel}</span></div>
+    <div class="kv"><span class="k">${t('m.cpf')}</span><span>${r.cpf}</span></div>
+    <div class="kv"><span class="k">${t('m.notes')}</span><span>${r.obs?tr(r.obs):'—'}</span></div>`;
+  document.getElementById('mod-foot').innerHTML = r.status==='pending'
+    ? `<button class="btn sm alt" onclick="closeModal()">${t('m.close')}</button><button class="btn sm" onclick="closeModal()">${t('m.confirmPay')}</button>`
+    : `<button class="btn sm alt" onclick="closeModal()">${t('m.markArrived')}</button><button class="btn sm" onclick="closeModal()">${t('m.markSeated')}</button>`;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+
+/* ===================== API (persistência) =====================
+   Quando servido pelo servidor Node, as reservas vêm do banco SQLite e as novas
+   ficam salvas. Aberto como arquivo (file://), cai nos dados de demonstração. */
+async function api(path,opts){const r=await fetch('/api'+path,opts);if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
+async function loadReservations(){
+  try{
+    const data=await api('/reservations');
+    if(Array.isArray(data)&&data.length){RESV=data;if(document.getElementById('admin').style.display==='block')ago(curAdmin);}
+  }catch(e){/* offline / file:// — usa dados de demonstração */}
+}
+async function saveReservation(){
+  try{
+    await api('/reservations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      nome:R.nome,pax:R.pax,hora:R.event?(R.event.iso?'20:00':R.hora):R.hora,turno:R.turno,
+      area:R.area,mesa:R.event?'—':R.mesa,status:'paid',valor:priceOf(),tel:R.tel,cpf:R.cpf,
+      pago:true,date:R.event?R.event.iso:R.date,obs:R.obs?{pt:R.obs,es:R.obs}:''
+    })});
+  }catch(e){/* sem servidor: a confirmação segue funcionando como demo */}
+}
+
+/* init */
+applyI18n(); renderClient(); ago('dash'); loadReservations();
+</script>
+</body>
+</html>

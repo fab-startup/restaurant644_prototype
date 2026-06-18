@@ -1,0 +1,14 @@
+{
+  "name": "aurora-reservas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sistema de reservas y eventos para restaurante (Aurora) — prototipo evolucionando a producto real.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  }
+}

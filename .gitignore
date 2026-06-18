@@ -1,0 +1,17 @@
+# Dependencias
+node_modules/
+
+# Base de datos local (se regenera y se siembra sola)
+data/*.db
+data/*.db-shm
+data/*.db-wal
+
+# Entorno
+.env
+.env.*
+
+# Sistema / editores
+.DS_Store
+*.log
+.vscode/
+.idea/
