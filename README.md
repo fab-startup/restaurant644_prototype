@@ -14,10 +14,11 @@ desde un servidor Node y una base de datos **SQLite** que persiste las reservas.
 
 ## Levantar en localhost
 ```bash
-npm start          # http://localhost:3000
+npm start          # http://localhost:4000
 # o, con recarga automática al editar:
 npm run dev
 ```
+El puerto por defecto es **4000**. Para usar otro: `PORT=5000 npm start`.
 No hace falta `npm install`: el proyecto no tiene dependencias externas.
 
 > También puedes abrir `public/index.html` directamente (doble clic) para una demo

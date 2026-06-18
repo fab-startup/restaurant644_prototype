@@ -252,6 +252,7 @@
     <div class="wrap" style="display:flex;align-items:center;gap:26px;width:100%">
       <div class="brand">Aurora<small>COZINHA & EVENTOS</small></div>
       <a data-v="home" onclick="cgo('home')" class="on" data-i18n="cnav.home">Início</a>
+      <a data-v="mine" onclick="cgo('mine')" data-i18n="cnav.mine">Minhas reservas</a>
       <div class="right"><button class="btn sm" onclick="startResv()" data-i18n="cnav.book">Reservar mesa</button></div>
     </div>
   </nav>
@@ -276,6 +277,10 @@
     <div id="resv-body"></div>
   </div></div>
 
+  <div id="c-mine" class="cview hidden">
+    <section class="section"><div class="wrap" id="mine-body"></div></section>
+  </div>
+
   <div class="footer"><div class="wrap" id="footer-txt"></div></div>
 </div>
 
@@ -285,10 +290,10 @@
     <div class="brand">Aurora<small>PAINEL</small></div>
     <a data-av="dash" class="on" onclick="ago('dash')"><span class="ic">📊</span> <span data-i18n="side.dash">Visão geral</span></a>
     <a data-av="resv" onclick="ago('resv')"><span class="ic">📅</span> <span data-i18n="side.resv">Reservas</span></a>
-    <a data-av="events" onclick="ago('events')"><span class="ic">🎉</span> <span data-i18n="side.events">Eventos</span></a>
-    <a data-av="clients" onclick="ago('clients')"><span class="ic">👥</span> <span data-i18n="side.clients">Clientes</span></a>
-    <a data-av="menu" onclick="ago('menu')"><span class="ic">🍽️</span> <span data-i18n="side.menu">Cardápio</span></a>
     <div class="soon" data-i18n="side.soon">Próximas fases</div>
+    <a class="dim"><span class="ic">🎉</span> <span data-i18n="side.events">Eventos</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
+    <a class="dim"><span class="ic">👥</span> <span data-i18n="side.clients">Clientes</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
+    <a class="dim"><span class="ic">🍽️</span> <span data-i18n="side.menu">Cardápio</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
     <a class="dim"><span class="ic">🧾</span> <span data-i18n="side.orders">Pedidos</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
     <a class="dim"><span class="ic">👨‍🍳</span> <span data-i18n="side.kitchen">Cozinha</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
     <a class="dim"><span class="ic">📦</span> <span data-i18n="side.stock">Estoque</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
@@ -310,6 +315,11 @@ const T = {
   'cnav.home':'Início','cnav.menu':'Cardápio','cnav.events':'Eventos','cnav.book':'Reservar mesa',
   'hero.title':'Sua mesa na Aurora','hero.sub':'Reserve em menos de um minuto, escolha seu ambiente favorito e garanta seu lugar nas nossas noites especiais.','hero.cta':'Reservar agora →','hero.meta':'Aberto · Almoço 12h–16h · Jantar 18h–23h · Pagamento via PIX',
   'home.evEyebrow':'Agenda da temporada','home.evTitle':'Em breve na Aurora','home.evLead':'Espie as próximas experiências da casa — reservas em breve.',
+  'cnav.mine':'Minhas reservas',
+  'cm.title':'Minhas reservas','cm.sub':'Acompanhe suas próximas reservas e consulte seu histórico.','cm.acct':'Conectado como',
+  'cm.upcoming':'Próximas','cm.empty':'Você ainda não tem reservas ativas.','cm.emptyCta':'Reservar uma mesa →',
+  'cm.showPast':'Mostrar reservas passadas','cm.hidePast':'Ocultar reservas passadas','cm.pastTitle':'Reservas passadas','cm.pastEmpty':'Sem reservas passadas.',
+  'cm.code':'Código','cm.today':'Hoje','cm.confirmed':'Confirmada','cm.completed':'Concluída','cm.pendingPay':'Aguardando PIX',
   'card.per':'/pessoa','card.book':'Reservar lugar','card.vagas':'vagas','card.soon':'Reservas em breve',
   'w.bookTable':'Reservar mesa','w.date':'Data','w.people':'Pessoas','w.turn':'Turno','w.lunch':'Almoço','w.dinner':'Jantar','w.time':'Horário',
   'w.ambience':'Ambiente','w.chooseTable':'Escolha sua mesa','w.cap':'capacidade ≥','w.seats':'lug.','w.legend':'⬜ disponível · 🔒 ocupada','w.noTables':'Sem mesas livres neste ambiente para esse tamanho. Tente outro ambiente.',
@@ -342,6 +352,11 @@ const T = {
   'cnav.home':'Inicio','cnav.menu':'Carta','cnav.events':'Eventos','cnav.book':'Reservar mesa',
   'hero.title':'Tu mesa en Aurora','hero.sub':'Reserva en menos de un minuto, elige tu ambiente favorito y asegura tu lugar en nuestras noches especiales.','hero.cta':'Reservar ahora →','hero.meta':'Abierto · Almuerzo 12h–16h · Cena 18h–23h · Pago vía PIX',
   'home.evEyebrow':'Agenda de temporada','home.evTitle':'Próximamente en Aurora','home.evLead':'Conoce las próximas experiencias de la casa — reservas próximamente.',
+  'cnav.mine':'Mis reservas',
+  'cm.title':'Mis reservas','cm.sub':'Consulta tus próximas reservas y tu historial.','cm.acct':'Conectado como',
+  'cm.upcoming':'Próximas','cm.empty':'Aún no tienes reservas activas.','cm.emptyCta':'Reservar una mesa →',
+  'cm.showPast':'Mostrar reservas pasadas','cm.hidePast':'Ocultar reservas pasadas','cm.pastTitle':'Reservas pasadas','cm.pastEmpty':'Sin reservas pasadas.',
+  'cm.code':'Código','cm.today':'Hoy','cm.confirmed':'Confirmada','cm.completed':'Completada','cm.pendingPay':'Esperando PIX',
   'card.per':'/persona','card.book':'Reservar lugar','card.vagas':'plazas','card.soon':'Reservas próximamente',
   'w.bookTable':'Reservar mesa','w.date':'Fecha','w.people':'Personas','w.turn':'Turno','w.lunch':'Almuerzo','w.dinner':'Cena','w.time':'Horario',
   'w.ambience':'Ambiente','w.chooseTable':'Elige tu mesa','w.cap':'capacidad ≥','w.seats':'lug.','w.legend':'⬜ disponible · 🔒 ocupada','w.noTables':'No hay mesas libres en este ambiente para ese tamaño. Prueba otro ambiente.',
@@ -460,6 +475,17 @@ const CLIENTS=[
  {nome:'Luana Dias',visitas:4,faltas:0,rate:5,tel:'(21) 90000-2222',ult:{pt:'Ontem',es:'Ayer'},tags:[{pt:'Frequente',es:'Frecuente'}]},
  {nome:'Júlia Andrade',visitas:3,faltas:2,rate:2,tel:'(21) 96666-3030',ult:{pt:'Hoje',es:'Hoy'},tags:[{pt:'Risco de no-show',es:'Riesgo de no-show'}]},
 ];
+/* Protótipo sem login real: simulamos um cliente conectado (conta obrigatória p/ reservas online).
+   MY_DEMO é o histórico de demonstração desse cliente — só do lado do cliente, não toca o painel. */
+const ME={nome:'Mariana Lopes',cpf:'123.456.789-00',tel:'(21) 98888-1010',email:'mariana.lopes@email.com'};
+let showPast=false;
+const MY_DEMO=[
+ {id:'R-1061',nome:'Mariana Lopes',pax:4,hora:'13:00',turno:'lunch', area:'varanda',mesa:'V2',status:'paid',  valor:160,tel:'(21) 98888-1010',cpf:'123.456.789-00',pago:true, date:'2026-06-27',obs:{pt:'Almoço em família',es:'Almuerzo en familia'}},
+ {id:'R-1060',nome:'Mariana Lopes',pax:2,hora:'20:30',turno:'dinner',area:'salao',  mesa:'S5',status:'paid',  valor:80, tel:'(21) 98888-1010',cpf:'123.456.789-00',pago:true, date:'2026-06-25',obs:{pt:'Jantar a dois',es:'Cena para dos'}},
+ {id:'R-1030',nome:'Mariana Lopes',pax:2,hora:'20:00',turno:'dinner',area:'salao',  mesa:'S1',status:'seated',valor:80, tel:'(21) 98888-1010',cpf:'123.456.789-00',pago:true, date:'2026-06-05',obs:{pt:'Jantar',es:'Cena'}},
+ {id:'R-1031',nome:'Mariana Lopes',pax:4,hora:'19:30',turno:'dinner',area:'varanda',mesa:'V4',status:'seated',valor:160,tel:'(21) 98888-1010',cpf:'123.456.789-00',pago:true, date:'2026-05-18',obs:{pt:'Comemoração',es:'Celebración'}},
+ {id:'R-1032',nome:'Mariana Lopes',pax:2,hora:'13:00',turno:'lunch', area:'salao',  mesa:'S4',status:'cancel',valor:80, tel:'(21) 98888-1010',cpf:'123.456.789-00',pago:false,date:'2026-04-22',obs:{pt:'Cancelada (crédito gerado)',es:'Cancelada (crédito generado)'}},
+];
 
 /* ===================== MODE / LANG ===================== */
 let curAdmin='dash';
@@ -474,6 +500,7 @@ function setLang(l){
   document.getElementById('l-es').classList.toggle('on',l==='es');
   applyI18n(); renderClient();
   if(!document.getElementById('c-resv').classList.contains('hidden')) renderResv();
+  if(!document.getElementById('c-mine').classList.contains('hidden')) renderMine();
   if(document.getElementById('admin').style.display==='block') ago(curAdmin);
 }
 function setMode(m){
@@ -487,6 +514,7 @@ function cgo(v){
   document.querySelectorAll('.cview').forEach(e=>e.classList.add('hidden'));
   document.getElementById('c-'+v).classList.remove('hidden');
   document.querySelectorAll('.cnav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
+  if(v==='mine') renderMine();
   window.scrollTo(0,0);
 }
 
@@ -504,11 +532,68 @@ function renderClient(){
   document.getElementById('home-events').innerHTML=EVENTS.slice(0,3).map(eventTeaser).join('');
 }
 
+/* ===================== MINHAS RESERVAS (cliente) ===================== */
+function mineList(){
+  const seen=new Set(), out=[];
+  [...RESV.filter(r=>r.cpf===ME.cpf), ...MY_DEMO].forEach(r=>{ if(!seen.has(r.id)){seen.add(r.id);out.push(r);} });
+  return out;
+}
+const isMineActive = r => r.status!=='cancel' && r.status!=='noshow' && r.date>=TODAY;
+function clientStatus(r){
+  if(r.status==='cancel')  return {label:t('st.cancel'),     cls:'gray'};
+  if(r.status==='noshow')  return {label:t('st.noshow'),     cls:'red'};
+  if(r.date<TODAY)         return {label:t('cm.completed'),  cls:'blue'};
+  if(r.status==='pending') return {label:t('cm.pendingPay'),cls:'amber'};
+  return {label:t('cm.confirmed'), cls:'green'};
+}
+function mineCard(r){
+  const s=clientStatus(r);
+  const isEvent=r.area==='eventos'&&(!r.mesa||r.mesa==='—');
+  const title=isEvent?r.nome:'Mesa '+r.mesa+' · '+areaNm(r.area);
+  const todayTag=r.date===TODAY?`<span class="pill amber" style="margin-left:6px">${t('cm.today')}</span>`:'';
+  return `<div class="card" style="margin-bottom:14px"><div class="body">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+      <div>
+        <div class="serif" style="font-size:18px;color:var(--wine)">${title}</div>
+        <div class="tiny" style="margin-top:3px">${dowFull(r.date)}, ${fmtDate(r.date)} · ${r.hora} · ${r.pax} ${t('w.people').toLowerCase()}</div>
+        ${r.obs?`<div class="tiny" style="margin-top:3px">“${tr(r.obs)}”</div>`:''}
+      </div>
+      <div style="text-align:right;white-space:nowrap"><span class="pill ${s.cls}">${s.label}</span>${todayTag}</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)">
+      <span class="tiny">${t('cm.code')}: <b>${r.id}</b></span>
+      <span class="tiny">${fmt(r.valor)} · <span class="pill ${r.pago?'green':'amber'}" style="font-size:11px">${r.pago?t('m.paid'):t('m.pending')}</span></span>
+    </div>
+  </div></div>`;
+}
+function renderMine(){
+  const list=mineList();
+  const active=list.filter(isMineActive).sort((a,b)=>(a.date+a.hora).localeCompare(b.date+b.hora));
+  const past=list.filter(r=>!isMineActive(r)).sort((a,b)=>(b.date+b.hora).localeCompare(a.date+a.hora));
+  document.getElementById('mine-body').innerHTML=`
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:4px">
+      <div><h2 style="font-size:30px;color:var(--wine)">${t('cm.title')}</h2>
+        <p class="lead" style="margin:0">${t('cm.sub')}</p></div>
+      <div class="tiny">${t('cm.acct')} <b>${ME.nome}</b></div>
+    </div>
+    <h3 style="margin:24px 0 12px;font-size:18px">${t('cm.upcoming')} <span class="tiny">(${active.length})</span></h3>
+    ${active.length?active.map(mineCard).join('')
+      :`<div class="card"><div class="body" style="text-align:center;padding:30px 18px">
+          <p class="muted" style="margin-bottom:14px">${t('cm.empty')}</p>
+          <button class="btn" onclick="startResv()">${t('cm.emptyCta')}</button></div></div>`}
+    <div style="margin:26px 0 14px;border-top:1px solid var(--line);padding-top:18px">
+      <button class="btn alt sm" onclick="togglePast()">${showPast?'▾ '+t('cm.hidePast'):'▸ '+t('cm.showPast')} (${past.length})</button>
+    </div>
+    ${showPast?`<h3 style="margin:6px 0 12px;color:var(--muted);font-size:16px">${t('cm.pastTitle')}</h3>
+       ${past.length?past.map(mineCard).join(''):`<p class="muted tiny">${t('cm.pastEmpty')}</p>`}`:''}`;
+}
+function togglePast(){showPast=!showPast;renderMine();}
+
 /* ===================== WIZARD ===================== */
 let R={};
 function startResv(evId){
   R={step:1,date:'2026-06-20',turno:'dinner',hora:'20:00',pax:2,area:'salao',mesa:null,
-     nome:'',cpf:'',tel:'',email:'',obs:'',consent:false,event:evId?EVENTS.find(e=>e.id===evId):null};
+     nome:ME.nome,cpf:ME.cpf,tel:ME.tel,email:ME.email,obs:'',consent:false,event:evId?EVENTS.find(e=>e.id===evId):null};
   cgo('resv'); renderResv();
 }
 const TOTAL_STEPS=4;
@@ -642,11 +727,6 @@ function adminDash(){
      <div class="twocol">
        <div class="panel"><div class="ph"><h3>${t('a.todayAgenda')}</h3><div class="actions"><span class="tiny">${ativas} ${t('a.activeResv')}</span></div></div><div class="pb">${timeline()}</div></div>
        <div>
-        <div class="panel"><div class="ph"><h3>${t('a.nextEvent')}</h3></div><div class="pb">
-          <div style="padding:6px 0"><b class="serif" style="font-size:17px">${EVENTS[0].nm}</b><div class="tiny">${tr(EVENTS[0].dateLbl)}</div>
-          <div class="kv" style="margin-top:8px"><span class="k">${t('a.soldSeats')}</span><span>${EVENTS[0].cap-EVENTS[0].left} / ${EVENTS[0].cap}</span></div>
-          <div class="bar" style="height:7px;background:var(--line);border-radius:5px;overflow:hidden"><i style="display:block;height:100%;background:var(--terra);width:${Math.round((EVENTS[0].cap-EVENTS[0].left)/EVENTS[0].cap*100)}%"></i></div>
-          <div class="kv"><span class="k">${t('a.expRevenue')}</span><span>${fmt((EVENTS[0].cap-EVENTS[0].left)*EVENTS[0].price)}</span></div></div></div></div>
         <div class="panel"><div class="ph"><h3>${t('a.attention')}</h3></div><div class="pb">
           <div class="kv"><span class="k">${t('a.waitingPix')}</span><span class="pill amber">1 ${t('a.oneResv')}</span></div>
           <div class="kv"><span class="k">${t('a.noshowToday')}</span><span class="pill red">1 ${t('a.oneClient')}</span></div>
@@ -784,17 +864,22 @@ async function loadReservations(){
   }catch(e){/* offline / file:// — usa dados de demonstração */}
 }
 async function saveReservation(){
+  const payload={
+    nome:R.nome,pax:R.pax,hora:R.event?(R.event.iso?'20:00':R.hora):R.hora,turno:R.turno,
+    area:R.area,mesa:R.event?'—':R.mesa,status:'paid',valor:priceOf(),tel:R.tel,cpf:R.cpf,
+    pago:true,date:R.event?R.event.iso:R.date,obs:R.obs?{pt:R.obs,es:R.obs}:''
+  };
+  let created=null;
   try{
-    await api('/reservations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-      nome:R.nome,pax:R.pax,hora:R.event?(R.event.iso?'20:00':R.hora):R.hora,turno:R.turno,
-      area:R.area,mesa:R.event?'—':R.mesa,status:'paid',valor:priceOf(),tel:R.tel,cpf:R.cpf,
-      pago:true,date:R.event?R.event.iso:R.date,obs:R.obs?{pt:R.obs,es:R.obs}:''
-    })});
+    created=await api('/reservations',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
   }catch(e){/* sem servidor: a confirmação segue funcionando como demo */}
+  // Reflete a reserva recém-criada no app (aparece em "Minhas reservas" e no painel).
+  const rec=created||{...payload,id:'R-'+(1100+RESV.length)};
+  if(rec&&rec.id&&!RESV.some(x=>x.id===rec.id)) RESV.push(rec);
 }
 
 /* init */
-applyI18n(); renderClient(); ago('dash'); loadReservations();
+applyI18n(); renderClient(); renderMine(); ago('dash'); loadReservations();
 </script>
 </body>
 </html>

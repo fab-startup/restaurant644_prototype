@@ -5,7 +5,8 @@
       "name": "aurora",
       "runtimeExecutable": "node",
       "runtimeArgs": ["server.js"],
-      "port": 3000
+      "port": 4000,
+      "autoPort": true
     }
   ]
 }
