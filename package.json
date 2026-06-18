@@ -1,8 +1,8 @@
 {
-  "name": "aurora-reservas",
+  "name": "restaurante644",
   "version": "0.1.0",
   "private": true,
-  "description": "Sistema de reservas y eventos para restaurante (Aurora) — prototipo evolucionando a producto real.",
+  "description": "Sistema de reservas y eventos para 644 Restaurante Pizzeria — prototipo evolucionando a producto real.",
   "type": "module",
   "engines": {
     "node": ">=22.5.0"

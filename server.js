@@ -1,4 +1,4 @@
-// Servidor de Aurora — Node.js puro (sin dependencias externas).
+// Servidor de 644 Restaurante Pizzeria — Node.js puro (sin dependencias externas).
 // Sirve el frontend (public/) y expone una API REST respaldada por SQLite.
 //   npm start  ->  http://localhost:3000
 import http from 'node:http';
@@ -48,7 +48,7 @@ async function serveStatic(req, res) {
 }
 
 async function handleApi(req, res, pathname) {
-  if (pathname === '/api/health') return json(res, 200, { ok: true, service: 'aurora', time: new Date().toISOString() });
+  if (pathname === '/api/health') return json(res, 200, { ok: true, service: '644-restaurante-pizzeria', time: new Date().toISOString() });
 
   if (pathname === '/api/reservations' && req.method === 'GET') {
     return json(res, 200, listReservations());
@@ -73,7 +73,7 @@ const server = http.createServer((req, res) => {
 
 const seeded = seedIfEmpty();
 server.listen(PORT, () => {
-  console.log(`\n  🍷 Aurora rodando em http://localhost:${PORT}`);
+  console.log(`\n  🍕 644 Restaurante Pizzeria rodando em http://localhost:${PORT}`);
   console.log(`     ${seeded ? 'Base de datos sembrada con datos de demostración.' : 'Base de datos existente cargada.'}`);
   console.log(`     API: GET/POST /api/reservations · GET /api/health\n`);
 });

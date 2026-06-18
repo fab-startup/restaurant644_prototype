@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aurora · Reservas & Eventos — Protótipo</title>
+<title>644 Restaurante Pizzeria · Reservas & Eventos — Protótipo</title>
 <style>
   :root{
     --wine:#6b1f2a; --wine-dark:#511720; --terra:#c25b34; --gold:#c79a4b;
@@ -235,7 +235,7 @@
 
 <div id="demobar">
   <span class="tag" data-i18n="demo.tag">PROTÓTIPO</span>
-  <span>Aurora · <span data-i18n="demo.sub">Sistema de Reservas & Eventos</span></span>
+  <span>644 Restaurante Pizzeria · <span data-i18n="demo.sub">Sistema de Reservas & Eventos</span></span>
   <div class="seg">
     <button id="m-client" class="on" onclick="setMode('client')" data-i18n="nav.client">👤 Cliente</button>
     <button id="m-admin" onclick="setMode('admin')" data-i18n="nav.admin">🏠 Painel do Dono</button>
@@ -250,7 +250,7 @@
 <div id="client">
   <nav class="cnav">
     <div class="wrap" style="display:flex;align-items:center;gap:26px;width:100%">
-      <div class="brand">Aurora<small>COZINHA & EVENTOS</small></div>
+      <div class="brand">644<small>RESTAURANTE · PIZZERIA</small></div>
       <a data-v="home" onclick="cgo('home')" class="on" data-i18n="cnav.home">Início</a>
       <a data-v="mine" onclick="cgo('mine')" data-i18n="cnav.mine">Minhas reservas</a>
       <div class="right"><button class="btn sm" onclick="startResv()" data-i18n="cnav.book">Reservar mesa</button></div>
@@ -259,14 +259,14 @@
 
   <div id="c-home" class="cview">
     <section class="hero"><div class="inner wrap">
-      <h1 data-i18n="hero.title">Sua mesa na Aurora</h1>
+      <h1 data-i18n="hero.title">Sua mesa no 644</h1>
       <p data-i18n="hero.sub">Reserve em menos de um minuto, escolha seu ambiente favorito e garanta seu lugar nas nossas noites especiais.</p>
       <button class="btn" style="background:var(--gold);color:var(--ink)" onclick="startResv()" data-i18n="hero.cta">Reservar agora →</button>
       <div class="meta" data-i18n="hero.meta">Aberto · Almoço 12h–16h · Jantar 18h–23h · Pagamento via PIX</div>
     </div></section>
     <section class="section" style="background:linear-gradient(180deg,#fcf6ee,var(--cream))"><div class="wrap">
       <div style="display:inline-block;background:var(--gold);color:var(--ink);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:12px">✦ <span data-i18n="home.evEyebrow">Agenda da temporada</span></div>
-      <h2 data-i18n="home.evTitle">Em breve na Aurora</h2>
+      <h2 data-i18n="home.evTitle">Em breve no 644</h2>
       <p class="lead" data-i18n="home.evLead">Espie as próximas experiências da casa — reservas em breve.</p>
       <div class="grid g3" id="home-events"></div>
     </div></section>
@@ -287,7 +287,7 @@
 <!-- ================= ADMIN ================= -->
 <div id="admin"><div class="admin-shell">
   <aside class="side">
-    <div class="brand">Aurora<small>PAINEL</small></div>
+    <div class="brand">644<small>PAINEL · PIZZERIA</small></div>
     <a data-av="dash" class="on" onclick="ago('dash')"><span class="ic">📊</span> <span data-i18n="side.dash">Visão geral</span></a>
     <a data-av="resv" onclick="ago('resv')"><span class="ic">📅</span> <span data-i18n="side.resv">Reservas</span></a>
     <div class="soon" data-i18n="side.soon">Próximas fases</div>
@@ -313,8 +313,8 @@ const T = {
  pt:{
   'demo.tag':'PROTÓTIPO','demo.sub':'Sistema de Reservas & Eventos','nav.client':'👤 Cliente','nav.admin':'🏠 Painel do Dono',
   'cnav.home':'Início','cnav.menu':'Cardápio','cnav.events':'Eventos','cnav.book':'Reservar mesa',
-  'hero.title':'Sua mesa na Aurora','hero.sub':'Reserve em menos de um minuto, escolha seu ambiente favorito e garanta seu lugar nas nossas noites especiais.','hero.cta':'Reservar agora →','hero.meta':'Aberto · Almoço 12h–16h · Jantar 18h–23h · Pagamento via PIX',
-  'home.evEyebrow':'Agenda da temporada','home.evTitle':'Em breve na Aurora','home.evLead':'Espie as próximas experiências da casa — reservas em breve.',
+  'hero.title':'Sua mesa no 644','hero.sub':'Reserve em menos de um minuto, escolha seu ambiente favorito e garanta seu lugar nas nossas noites especiais.','hero.cta':'Reservar agora →','hero.meta':'Aberto · Almoço 12h–16h · Jantar 18h–23h · Pagamento via PIX',
+  'home.evEyebrow':'Agenda da temporada','home.evTitle':'Em breve no 644','home.evLead':'Espie as próximas experiências da casa — reservas em breve.',
   'cnav.mine':'Minhas reservas',
   'cm.title':'Minhas reservas','cm.sub':'Acompanhe suas próximas reservas e consulte seu histórico.','cm.acct':'Conectado como',
   'cm.upcoming':'Próximas','cm.empty':'Você ainda não tem reservas ativas.','cm.emptyCta':'Reservar uma mesa →',
@@ -342,7 +342,7 @@ const T = {
   'a.menuSub':'Edite pratos, preços e disponibilidade — reflete no site do cliente','a.addItem':'+ Adicionar item','a.items':'itens','a.available':'Disponível','a.soldout':'Esgotado','a.edit':'Editar',
   'm.status':'Status','m.dateTime':'Data / horário','m.people':'Pessoas','m.tableAmb':'Mesa / ambiente','m.payment':'Pagamento','m.phone':'Telefone','m.cpf':'CPF','m.notes':'Observações','m.close':'Fechar','m.confirmPay':'Confirmar pagamento','m.markArrived':'Marcar chegada','m.markSeated':'Marcar como sentado','m.paid':'Pago','m.pending':'Pendente','m.via':'via PIX',
   'st.seated':'Sentado','st.paid':'Pago','st.pending':'Pendente','st.noshow':'No-show','st.cancel':'Cancelada',
-  'turn.lunch':'Almoço','turn.dinner':'Jantar','footer':'Aurora · Rua das Laranjeiras, 120 — Rio de Janeiro · (21) 99999-0000 · <span class="muted">Protótipo de demonstração — nenhum pagamento real é processado.</span>',
+  'turn.lunch':'Almoço','turn.dinner':'Jantar','footer':'644 Restaurante Pizzeria · Rua das Laranjeiras, 120 — Rio de Janeiro · (21) 99999-0000 · <span class="muted">Protótipo de demonstração — nenhum pagamento real é processado.</span>',
   'weekFull':['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'],
   'weekShort':['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'],'monShort':['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'],
   'monFull':['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
@@ -350,8 +350,8 @@ const T = {
  es:{
   'demo.tag':'PROTOTIPO','demo.sub':'Sistema de Reservas y Eventos','nav.client':'👤 Cliente','nav.admin':'🏠 Panel del Dueño',
   'cnav.home':'Inicio','cnav.menu':'Carta','cnav.events':'Eventos','cnav.book':'Reservar mesa',
-  'hero.title':'Tu mesa en Aurora','hero.sub':'Reserva en menos de un minuto, elige tu ambiente favorito y asegura tu lugar en nuestras noches especiales.','hero.cta':'Reservar ahora →','hero.meta':'Abierto · Almuerzo 12h–16h · Cena 18h–23h · Pago vía PIX',
-  'home.evEyebrow':'Agenda de temporada','home.evTitle':'Próximamente en Aurora','home.evLead':'Conoce las próximas experiencias de la casa — reservas próximamente.',
+  'hero.title':'Tu mesa en el 644','hero.sub':'Reserva en menos de un minuto, elige tu ambiente favorito y asegura tu lugar en nuestras noches especiales.','hero.cta':'Reservar ahora →','hero.meta':'Abierto · Almuerzo 12h–16h · Cena 18h–23h · Pago vía PIX',
+  'home.evEyebrow':'Agenda de temporada','home.evTitle':'Próximamente en el 644','home.evLead':'Conoce las próximas experiencias de la casa — reservas próximamente.',
   'cnav.mine':'Mis reservas',
   'cm.title':'Mis reservas','cm.sub':'Consulta tus próximas reservas y tu historial.','cm.acct':'Conectado como',
   'cm.upcoming':'Próximas','cm.empty':'Aún no tienes reservas activas.','cm.emptyCta':'Reservar una mesa →',
@@ -379,7 +379,7 @@ const T = {
   'a.menuSub':'Edita platos, precios y disponibilidad — se refleja en el sitio del cliente','a.addItem':'+ Añadir ítem','a.items':'ítems','a.available':'Disponible','a.soldout':'Agotado','a.edit':'Editar',
   'm.status':'Estado','m.dateTime':'Fecha / horario','m.people':'Personas','m.tableAmb':'Mesa / ambiente','m.payment':'Pago','m.phone':'Teléfono','m.cpf':'CPF','m.notes':'Observaciones','m.close':'Cerrar','m.confirmPay':'Confirmar pago','m.markArrived':'Marcar llegada','m.markSeated':'Marcar como sentado','m.paid':'Pagado','m.pending':'Pendiente','m.via':'vía PIX',
   'st.seated':'Sentado','st.paid':'Pagado','st.pending':'Pendiente','st.noshow':'No-show','st.cancel':'Cancelada',
-  'turn.lunch':'Almuerzo','turn.dinner':'Cena','footer':'Aurora · Rua das Laranjeiras, 120 — Río de Janeiro · (21) 99999-0000 · <span class="muted">Prototipo de demostración — ningún pago real es procesado.</span>',
+  'turn.lunch':'Almuerzo','turn.dinner':'Cena','footer':'644 Restaurante Pizzeria · Rua das Laranjeiras, 120 — Río de Janeiro · (21) 99999-0000 · <span class="muted">Prototipo de demostración — ningún pago real es procesado.</span>',
   'weekFull':['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
   'weekShort':['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],'monShort':['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'],
   'monFull':['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre']
@@ -416,7 +416,7 @@ const EVENTS=[
   menu:{pt:'Menu degustação 5 tempos + harmonização de vinhos',es:'Menú degustación 5 tiempos + armonización de vinos'}},
  {id:'ev3',nm:'Feijoada de Sábado',iso:'2026-07-05',d:5,mon:'JUL',cap:80,left:42,price:95,
   type:{pt:'Almoço temático',es:'Almuerzo temático'},dateLbl:{pt:'Sábado, 5 jul · 12h',es:'Sábado, 5 jul · 12h'},
-  desc:{pt:'A tradicional feijoada completa da Aurora, à vontade.',es:'La tradicional feijoada completa de Aurora, a discreción.'},
+  desc:{pt:'A tradicional feijoada completa do 644, à vontade.',es:'La tradicional feijoada completa del 644, a discreción.'},
   menu:{pt:'Feijoada completa + caipirinha de cortesia',es:'Feijoada completa + caipiriña de cortesía'}},
  {id:'ev4',nm:'Degustação de Vinhos',iso:'2026-07-12',d:12,mon:'JUL',cap:24,left:24,price:190,
   type:{pt:'Degustação',es:'Degustación'},dateLbl:{pt:'Sábado, 12 jul · 19h',es:'Sábado, 12 jul · 19h'},
@@ -662,7 +662,7 @@ function step4(){
       <div class="ln total"><span>${R.event?t('w.total'):t('w.signal')}</span><span>${fmt(priceOf())}</span></div></div>
     <div class="pix"><p style="font-weight:600;margin-bottom:6px">${t('w.payTitle')}</p>
       <p class="tiny" style="margin-bottom:6px">${t('w.payScan')}</p>${qrSvg()}
-      <div class="pixkey">00020126aurora-pix-${(R.cpf||'cliente').slice(0,6)}-${R.pax}p5204000053039865802BR</div>
+      <div class="pixkey">00020126r644-pix-${(R.cpf||'cliente').slice(0,6)}-${R.pax}p5204000053039865802BR</div>
       <button class="btn alt sm" style="margin-top:10px" onclick="this.textContent=t('w.copied')">${t('w.copyKey')}</button></div>
     <div class="note" style="margin-top:16px">🔒 <span>${t('w.payNote')}</span></div>
     <div class="foot" style="margin:18px -26px -26px;padding:18px 26px">
@@ -672,8 +672,8 @@ function step4(){
 function stepDone(){
   const target=R.event?R.event.nm:R.mesa+' · '+areaNm(R.area);
   const wa = (L==='pt'
-    ? `✅ *Reserva confirmada — Aurora*\nOlá ${R.nome||'cliente'}! Sua reserva está garantida.\n📅 ${dtLbl()}\n🪑 ${target}\n👥 ${R.pax} pessoas\n💳 ${fmt(priceOf())} pago via PIX\nCódigo: R-1049\nAté breve! 🍷`
-    : `✅ *Reserva confirmada — Aurora*\n¡Hola ${R.nome||'cliente'}! Tu reserva está garantizada.\n📅 ${dtLbl()}\n🪑 ${target}\n👥 ${R.pax} personas\n💳 ${fmt(priceOf())} pagado vía PIX\nCódigo: R-1049\n¡Hasta pronto! 🍷`);
+    ? `✅ *Reserva confirmada — 644 Restaurante Pizzeria*\nOlá ${R.nome||'cliente'}! Sua reserva está garantida.\n📅 ${dtLbl()}\n🪑 ${target}\n👥 ${R.pax} pessoas\n💳 ${fmt(priceOf())} pago via PIX\nCódigo: R-1049\nAté breve! 🍷`
+    : `✅ *Reserva confirmada — 644 Restaurante Pizzeria*\n¡Hola ${R.nome||'cliente'}! Tu reserva está garantizada.\n📅 ${dtLbl()}\n🪑 ${target}\n👥 ${R.pax} personas\n💳 ${fmt(priceOf())} pagado vía PIX\nCódigo: R-1049\n¡Hasta pronto! 🍷`);
   return `<div class="confirm">
     <div class="big">✓</div><h2 style="color:var(--wine)">${t('w.confirmed')}</h2>
     <p class="muted" style="margin:8px 0 6px">${t('w.confirmedSub')}</p>
@@ -685,7 +685,7 @@ function stepDone(){
       <div class="ln"><span class="muted">${t('w.payment')}</span><span><span class="pill green">${t('w.payPaid')} · ${fmt(priceOf())}</span></span></div></div>
     <div class="tiny" style="margin-top:14px">${t('w.seeWa')}</div>
     <div class="phone"><div class="scr">
-      <div class="wahead"><div class="ava">A</div><div><div>Aurora</div><div style="font-size:10px;color:#8aa6a0">${t('w.online')}</div></div>
+      <div class="wahead"><div class="ava">6</div><div><div>644 Restaurante Pizzeria</div><div style="font-size:10px;color:#8aa6a0">${t('w.online')}</div></div>
         <span style="margin-left:auto;color:var(--wa);font-size:18px">✆</span></div>
       <div class="chat"><div class="bubble">${wa.replace(/\*(.+?)\*/g,'<b>$1</b>')}<div class="bt">14:32 ✓✓</div></div></div>
     </div></div>

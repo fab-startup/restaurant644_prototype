@@ -1,5 +1,5 @@
 // Capa de persistencia — SQLite nativo de Node (node:sqlite, sin dependencias).
-// La base de datos vive en data/aurora.db y guarda el progreso de las acciones (reservas).
+// La base de datos vive en data/restaurante644.db y guarda el progreso de las acciones (reservas).
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync } from 'node:fs';
 import path from 'node:path';
@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, 'data');
 mkdirSync(DATA_DIR, { recursive: true });
 
-export const db = new DatabaseSync(path.join(DATA_DIR, 'aurora.db'));
+export const db = new DatabaseSync(path.join(DATA_DIR, 'restaurante644.db'));
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS reservations (

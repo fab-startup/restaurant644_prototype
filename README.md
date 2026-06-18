@@ -1,6 +1,6 @@
-# Aurora · Sistema de Reservas y Eventos
+# 644 Restaurante Pizzeria · Sistema de Reservas y Eventos
 
-Sistema de reservas y eventos para un restaurante (proyecto **Aurora**). Empezó como un
+Sistema de reservas y eventos para **644 Restaurante Pizzeria**. Empezó como un
 prototipo clicable para presentar al dueño y ahora es un proyecto real: frontend servido
 desde un servidor Node y una base de datos **SQLite** que persiste las reservas.
 
@@ -32,7 +32,7 @@ No hace falta `npm install`: el proyecto no tiene dependencias externas.
 ├── seed.js          # Datos de demostración para sembrar la DB
 ├── public/
 │   └── index.html   # Frontend (cliente + panel del dueño)
-├── data/            # aurora.db (se crea y siembra solo; ignorado por git)
+├── data/            # base de datos local (se crea y siembra sola; ignorada por git)
 └── docs/            # Material de descubrimiento (entrevistas, requisitos, mockup)
 ```
 
@@ -46,18 +46,23 @@ No hace falta `npm install`: el proyecto no tiene dependencias externas.
 Al confirmar una reserva en el sitio del cliente, se hace `POST` y queda guardada;
 el panel del dueño la lee desde la base de datos.
 
-## Subir a GitHub
-El repositorio ya está inicializado y configurado para commitear con tu correo personal
-(`jlbolanosr@gmail.com`). Como no hay `gh` CLI instalado, crea el repo vacío en
-github.com (sin README) y luego:
+## GitHub
+El repositorio está en **https://github.com/jLB117/restaurant644** y se commitea con el
+correo personal `jlbolanosr@gmail.com`.
 
-```bash
-git remote add origin https://github.com/<tu-usuario>/aurora-reservas.git
-git push -u origin main
+La cuenta personal usa una llave SSH propia a través de un alias de host (`github-personal`
+en `~/.ssh/config`), independiente de otras cuentas en la máquina. Por eso el `origin` es:
+
+```
+git@github-personal:jLB117/restaurant644.git
 ```
 
-(Si prefieres, instala el CLI con `brew install gh`, ejecuta `gh auth login` y luego
-`gh repo create aurora-reservas --private --source=. --push`.)
+Flujo normal de trabajo:
+```bash
+git add -A
+git commit -m "..."
+git push
+```
 
 ## Próximos pasos sugeridos
 - Conectar también **eventos** y **clientes** a la base de datos.
