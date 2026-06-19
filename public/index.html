@@ -243,7 +243,7 @@
   <span>644 Restaurante Pizzeria · <span data-i18n="demo.sub">Sistema de Reservas & Eventos</span></span>
   <div class="seg">
     <button id="m-client" class="on" onclick="setMode('client')" data-i18n="nav.client">👤 Cliente</button>
-    <button id="m-admin" onclick="setMode('admin')" data-i18n="nav.admin">🏠 Painel do Dono</button>
+    <button id="m-admin" onclick="requestAdmin()" data-i18n="nav.admin">🏠 Painel do Dono</button>
   </div>
   <div class="lang">
     <button id="l-pt" class="on" onclick="setLang('pt')">PT</button>
@@ -302,6 +302,7 @@
     <a class="dim"><span class="ic">🧾</span> <span data-i18n="side.orders">Pedidos</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
     <a class="dim"><span class="ic">👨‍🍳</span> <span data-i18n="side.kitchen">Cozinha</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
     <a class="dim"><span class="ic">📦</span> <span data-i18n="side.stock">Estoque</span> <span class="tag" data-i18n="side.soonTag">em breve</span></a>
+    <a onclick="logout()" style="margin-top:20px;border-top:1px solid rgba(255,255,255,.1)"><span class="ic">🚪</span> <span data-i18n="auth.logout">Sair</span></a>
   </aside>
   <main class="main" id="admin-main"></main>
 </div></div>
@@ -330,6 +331,7 @@ const T = {
   'auth.email':'E-mail','auth.password':'Senha','auth.name':'Nome completo','auth.phone':'Telefone / WhatsApp','auth.cpf':'CPF (opcional)',
   'auth.noAccount':'Não tem conta?','auth.haveAccount':'Já tem conta?','auth.logout':'Sair','auth.hello':'Olá',
   'auth.clientOnly':'O cadastro cria apenas contas de cliente.','auth.demo':'Demonstração: mariana@644.com · cliente123','auth.gate':'Entre na sua conta para reservar.',
+  'auth.adminTitle':'Acesso ao painel','auth.adminHint':'Área restrita à equipe gestora do restaurante.','auth.adminDemo':'Demonstração: gerente@644.com · gerente123','auth.noAdmin':'Esta conta não tem acesso ao painel.',
   'cm.title':'Minhas reservas','cm.sub':'Acompanhe suas próximas reservas e consulte seu histórico.','cm.acct':'Conectado como',
   'cm.upcoming':'Próximas','cm.empty':'Você ainda não tem reservas ativas.','cm.emptyCta':'Reservar uma mesa →',
   'cm.showPast':'Mostrar reservas passadas','cm.hidePast':'Ocultar reservas passadas','cm.pastTitle':'Reservas passadas','cm.pastEmpty':'Sem reservas passadas.',
@@ -371,6 +373,7 @@ const T = {
   'auth.email':'Correo','auth.password':'Contraseña','auth.name':'Nombre completo','auth.phone':'Teléfono / WhatsApp','auth.cpf':'CPF (opcional)',
   'auth.noAccount':'¿No tienes cuenta?','auth.haveAccount':'¿Ya tienes cuenta?','auth.logout':'Salir','auth.hello':'Hola',
   'auth.clientOnly':'El registro crea solo cuentas de cliente.','auth.demo':'Demostración: mariana@644.com · cliente123','auth.gate':'Entra a tu cuenta para reservar.',
+  'auth.adminTitle':'Acceso al panel','auth.adminHint':'Área restringida al equipo gestor del restaurante.','auth.adminDemo':'Demostración: gerente@644.com · gerente123','auth.noAdmin':'Esta cuenta no tiene acceso al panel.',
   'cm.title':'Mis reservas','cm.sub':'Consulta tus próximas reservas y tu historial.','cm.acct':'Conectado como',
   'cm.upcoming':'Próximas','cm.empty':'Aún no tienes reservas activas.','cm.emptyCta':'Reservar una mesa →',
   'cm.showPast':'Mostrar reservas pasadas','cm.hidePast':'Ocultar reservas pasadas','cm.pastTitle':'Reservas pasadas','cm.pastEmpty':'Sin reservas pasadas.',
@@ -905,7 +908,7 @@ async function saveReservation(){
    Login/registro contra el backend. Solo crea cuentas de tipo cliente.
    Requiere el servidor (npm start); abierto como archivo no hay auth. */
 const AUTH={ token: localStorage.getItem('r644_token')||null, user:null };
-let authMode='login', authIntent=null;
+let authMode='login', authIntent=null, authForManager=false;
 async function apiRaw(path,opts={}){
   const r=await fetch('/api'+path,opts);
   const data=await r.json().catch(()=>({}));
@@ -929,20 +932,28 @@ function applyAuthUI(){
     if(!document.getElementById('c-mine').classList.contains('hidden')) cgo('home');
   }
 }
-function openAuth(mode){ authMode=mode; renderAuthForm(mode); document.getElementById('authModal').classList.add('open'); }
+function openAuth(mode,manager=false){ authMode=mode; authForManager=manager; renderAuthForm(mode); document.getElementById('authModal').classList.add('open'); }
 function closeAuth(){ document.getElementById('authModal').classList.remove('open'); }
+// Acceso al panel del dueño: requiere una cuenta de tipo 'gestor'.
+function requestAdmin(){
+  if(AUTH.user && AUTH.user.role==='gestor'){ setMode('admin'); return; }
+  authIntent='admin'; openAuth('login',true);
+}
 function authErr(msg){ const e=document.getElementById('auth-err'); if(e) e.textContent=msg||''; }
 function renderAuthForm(mode){
-  document.getElementById('auth-title').textContent = mode==='login'?t('auth.loginTitle'):t('auth.registerTitle');
+  document.getElementById('auth-title').textContent =
+    mode!=='login' ? t('auth.registerTitle') : (authForManager ? t('auth.adminTitle') : t('auth.loginTitle'));
   const b=document.getElementById('auth-body');
   if(mode==='login'){
+    const footer = authForManager
+      ? `<div class="note" style="margin-top:14px">🔒 <span>${t('auth.adminHint')}</span></div><div class="auth-demo">${t('auth.adminDemo')}</div>`
+      : `<div class="auth-switch">${t('auth.noAccount')} <a onclick="openAuth('register')">${t('auth.createAccount')}</a></div><div class="auth-demo">${t('auth.demo')}</div>`;
     b.innerHTML=`
       <div class="field"><label>${t('auth.email')}</label><input id="au-email" type="email" placeholder="voce@email.com"></div>
       <div class="field"><label>${t('auth.password')}</label><input id="au-senha" type="password" placeholder="••••••••"></div>
       <div id="auth-err" class="auth-err"></div>
       <button class="btn" style="width:100%;justify-content:center" onclick="submitLogin()">${t('auth.enter')}</button>
-      <div class="auth-switch">${t('auth.noAccount')} <a onclick="openAuth('register')">${t('auth.createAccount')}</a></div>
-      <div class="auth-demo">${t('auth.demo')}</div>`;
+      ${footer}`;
   }else{
     b.innerHTML=`
       <div class="field"><label>${t('auth.name')} *</label><input id="au-nome" placeholder="${t('w.namePh')}"></div>
@@ -978,8 +989,14 @@ async function submitRegister(){
 }
 function onAuthed(data){
   AUTH.token=data.token; localStorage.setItem('r644_token',data.token);
-  setUser(data.user); closeAuth(); applyAuthUI(); renderClient();
-  const intent=authIntent; authIntent=null;
+  setUser(data.user); applyAuthUI(); renderClient();
+  const intent=authIntent;
+  // Acceso al panel: solo gestores. Un cliente queda logueado pero sin panel.
+  if(intent==='admin'){
+    if(AUTH.user.role==='gestor'){ authIntent=null; closeAuth(); setMode('admin'); return; }
+    return authErr(t('auth.noAdmin')); // sigue en el modal mostrando el motivo
+  }
+  authIntent=null; closeAuth();
   if(intent==='mine') cgo('mine');
   else if(intent) startResv(intent===true?undefined:intent);
   else cgo('home');
@@ -988,7 +1005,7 @@ async function logout(){
   try{ await apiRaw('/auth/logout',{method:'POST',headers:{'Authorization':'Bearer '+AUTH.token}}); }catch(e){}
   AUTH.token=null; AUTH.user=null; localStorage.removeItem('r644_token');
   ME={nome:'',cpf:'',tel:'',email:''};
-  applyAuthUI(); cgo('home');
+  setMode('client'); applyAuthUI(); cgo('home');
 }
 async function bootstrapAuth(){
   if(!AUTH.token){ applyAuthUI(); return; }
