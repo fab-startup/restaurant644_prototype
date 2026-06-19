@@ -5,7 +5,10 @@ import http from 'node:http';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { listReservations, createReservation, seedIfEmpty } from './db.js';
+import {
+  listReservations, createReservation, seedIfEmpty,
+  createUser, authenticate, createSession, getUserByToken, deleteSession, seedUsersIfEmpty,
+} from './db.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.join(__dirname, 'public');
@@ -47,8 +50,43 @@ async function serveStatic(req, res) {
   }
 }
 
+const bearer = (req) => (req.headers.authorization || '').replace(/^Bearer\s+/i, '') || null;
+
 async function handleApi(req, res, pathname) {
   if (pathname === '/api/health') return json(res, 200, { ok: true, service: '644-restaurante-pizzeria', time: new Date().toISOString() });
+
+  // ---------- Auth ----------
+  // Registro: SIEMPRE crea cuentas de tipo 'cliente'. No se pueden crear gestores aquí.
+  if (pathname === '/api/auth/register' && req.method === 'POST') {
+    try {
+      const { nome, email, senha, tel, cpf } = await readBody(req);
+      const user = createUser({ nome, email, senha, tel, cpf }, { allowRole: 'cliente' });
+      const token = createSession(user.id);
+      return json(res, 201, { token, user });
+    } catch (e) {
+      return json(res, 400, { error: String(e.message || e) });
+    }
+  }
+  if (pathname === '/api/auth/login' && req.method === 'POST') {
+    try {
+      const { email, senha } = await readBody(req);
+      const u = authenticate(email, senha);
+      if (!u) return json(res, 401, { error: 'e-mail o contraseña incorrectos' });
+      const token = createSession(u.id);
+      return json(res, 200, { token, user: { id: u.id, nome: u.nome, email: u.email, role: u.role, tel: u.tel, cpf: u.cpf } });
+    } catch (e) {
+      return json(res, 400, { error: String(e.message || e) });
+    }
+  }
+  if (pathname === '/api/auth/me' && req.method === 'GET') {
+    const user = getUserByToken(bearer(req));
+    if (!user) return json(res, 401, { error: 'no autenticado' });
+    return json(res, 200, { user });
+  }
+  if (pathname === '/api/auth/logout' && req.method === 'POST') {
+    deleteSession(bearer(req));
+    return json(res, 200, { ok: true });
+  }
 
   if (pathname === '/api/reservations' && req.method === 'GET') {
     return json(res, 200, listReservations());
@@ -72,8 +110,10 @@ const server = http.createServer((req, res) => {
 });
 
 const seeded = seedIfEmpty();
+seedUsersIfEmpty();
 server.listen(PORT, () => {
   console.log(`\n  🍕 644 Restaurante Pizzeria rodando em http://localhost:${PORT}`);
   console.log(`     ${seeded ? 'Base de datos sembrada con datos de demostración.' : 'Base de datos existente cargada.'}`);
-  console.log(`     API: GET/POST /api/reservations · GET /api/health\n`);
+  console.log(`     API: /api/reservations · /api/auth/{register,login,me,logout} · /api/health`);
+  console.log(`     Cuenta demo cliente:  mariana@644.com / cliente123\n`);
 });

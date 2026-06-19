@@ -37,14 +37,31 @@ No hace falta `npm install`: el proyecto no tiene dependencias externas.
 ```
 
 ## API
-| Método | Ruta                 | Descripción                          |
-|--------|----------------------|--------------------------------------|
-| GET    | `/api/health`        | Estado del servicio                  |
-| GET    | `/api/reservations`  | Lista de reservas (desde SQLite)     |
-| POST   | `/api/reservations`  | Crea una reserva (la persiste)       |
+| Método | Ruta                  | Descripción                                   |
+|--------|-----------------------|-----------------------------------------------|
+| GET    | `/api/health`         | Estado del servicio                           |
+| GET    | `/api/reservations`   | Lista de reservas (desde SQLite)              |
+| POST   | `/api/reservations`   | Crea una reserva (la persiste)                |
+| POST   | `/api/auth/register`  | Crea una cuenta **de cliente** + token        |
+| POST   | `/api/auth/login`     | Inicia sesión, devuelve token                 |
+| GET    | `/api/auth/me`        | Devuelve el usuario del token (Bearer)        |
+| POST   | `/api/auth/logout`    | Cierra la sesión del token                    |
 
 Al confirmar una reserva en el sitio del cliente, se hace `POST` y queda guardada;
 el panel del dueño la lee desde la base de datos.
+
+## Autenticación
+Login simple con contraseñas hasheadas (scrypt nativo) y sesiones por token (guardado en
+`localStorage`). El usuario entra y solo ve **Inicio**; para reservar o ver **Mis reservas**
+debe iniciar sesión o crear una cuenta.
+
+- El registro **solo crea cuentas de tipo `cliente`**. Las cuentas de gestor (`gestor`) no se
+  pueden crear desde el registro; se siembran internamente (`seedUsersIfEmpty` en `db.js`).
+- Cuentas de demostración (se siembran en el primer arranque):
+  - **Cliente:** `mariana@644.com` / `cliente123`
+  - **Gestor:** `gerente@644.com` / `gerente123`
+
+> Requiere el servidor (`npm start`). Abierto como archivo (`file://`) no hay autenticación.
 
 ## GitHub
 El repositorio está en **https://github.com/jLB117/restaurant644** y se commitea con el

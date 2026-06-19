@@ -222,6 +222,11 @@
   .kv{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
   .kv:last-child{border:none}.kv .k{color:var(--muted)}
   .modal .mf{padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;background:#fbf6ef}
+  .uchip{font-size:13px;color:var(--ink);font-weight:600;background:#f1e7d6;padding:7px 13px;border-radius:20px;white-space:nowrap}
+  .auth-err{color:var(--red);font-size:13px;margin-bottom:10px;min-height:18px}
+  .auth-switch{text-align:center;margin-top:16px;font-size:14px;color:var(--muted)}
+  .auth-switch a{color:var(--wine);font-weight:600;cursor:pointer}
+  .auth-demo{margin-top:12px;text-align:center;font-size:12px;color:var(--muted);background:#fbf6ef;border:1px dashed var(--line);border-radius:8px;padding:8px}
 
   @media(max-width:880px){
     .g3,.g2{grid-template-columns:1fr} .kpis{grid-template-columns:repeat(2,1fr)}
@@ -252,8 +257,8 @@
     <div class="wrap" style="display:flex;align-items:center;gap:26px;width:100%">
       <div class="brand">644<small>RESTAURANTE · PIZZERIA</small></div>
       <a data-v="home" onclick="cgo('home')" class="on" data-i18n="cnav.home">Início</a>
-      <a data-v="mine" onclick="cgo('mine')" data-i18n="cnav.mine">Minhas reservas</a>
-      <div class="right"><button class="btn sm" onclick="startResv()" data-i18n="cnav.book">Reservar mesa</button></div>
+      <a data-v="mine" id="nav-mine" class="hidden" onclick="cgo('mine')" data-i18n="cnav.mine">Minhas reservas</a>
+      <div class="right" id="cnav-right"></div>
     </div>
   </nav>
 
@@ -306,6 +311,11 @@
   <div class="mb" id="mod-body"></div><div class="mf" id="mod-foot"></div>
 </div></div>
 
+<div class="modal" id="authModal"><div class="box">
+  <div class="mh"><h3 id="auth-title">Entrar</h3><span class="x" onclick="closeAuth()">×</span></div>
+  <div class="mb" id="auth-body"></div>
+</div></div>
+
 <script>
 /* ===================== i18n ===================== */
 let L = 'pt';
@@ -316,6 +326,10 @@ const T = {
   'hero.title':'Sua mesa no 644','hero.sub':'Reserve em menos de um minuto, escolha seu ambiente favorito e garanta seu lugar nas nossas noites especiais.','hero.cta':'Reservar agora →','hero.meta':'Aberto · Almoço 12h–16h · Jantar 18h–23h · Pagamento via PIX',
   'home.evEyebrow':'Agenda da temporada','home.evTitle':'Em breve no 644','home.evLead':'Espie as próximas experiências da casa — reservas em breve.',
   'cnav.mine':'Minhas reservas',
+  'auth.loginTitle':'Entrar','auth.registerTitle':'Criar conta','auth.enter':'Entrar','auth.createAccount':'Criar conta',
+  'auth.email':'E-mail','auth.password':'Senha','auth.name':'Nome completo','auth.phone':'Telefone / WhatsApp','auth.cpf':'CPF (opcional)',
+  'auth.noAccount':'Não tem conta?','auth.haveAccount':'Já tem conta?','auth.logout':'Sair','auth.hello':'Olá',
+  'auth.clientOnly':'O cadastro cria apenas contas de cliente.','auth.demo':'Demonstração: mariana@644.com · cliente123','auth.gate':'Entre na sua conta para reservar.',
   'cm.title':'Minhas reservas','cm.sub':'Acompanhe suas próximas reservas e consulte seu histórico.','cm.acct':'Conectado como',
   'cm.upcoming':'Próximas','cm.empty':'Você ainda não tem reservas ativas.','cm.emptyCta':'Reservar uma mesa →',
   'cm.showPast':'Mostrar reservas passadas','cm.hidePast':'Ocultar reservas passadas','cm.pastTitle':'Reservas passadas','cm.pastEmpty':'Sem reservas passadas.',
@@ -353,6 +367,10 @@ const T = {
   'hero.title':'Tu mesa en el 644','hero.sub':'Reserva en menos de un minuto, elige tu ambiente favorito y asegura tu lugar en nuestras noches especiales.','hero.cta':'Reservar ahora →','hero.meta':'Abierto · Almuerzo 12h–16h · Cena 18h–23h · Pago vía PIX',
   'home.evEyebrow':'Agenda de temporada','home.evTitle':'Próximamente en el 644','home.evLead':'Conoce las próximas experiencias de la casa — reservas próximamente.',
   'cnav.mine':'Mis reservas',
+  'auth.loginTitle':'Entrar','auth.registerTitle':'Crear cuenta','auth.enter':'Entrar','auth.createAccount':'Crear cuenta',
+  'auth.email':'Correo','auth.password':'Contraseña','auth.name':'Nombre completo','auth.phone':'Teléfono / WhatsApp','auth.cpf':'CPF (opcional)',
+  'auth.noAccount':'¿No tienes cuenta?','auth.haveAccount':'¿Ya tienes cuenta?','auth.logout':'Salir','auth.hello':'Hola',
+  'auth.clientOnly':'El registro crea solo cuentas de cliente.','auth.demo':'Demostración: mariana@644.com · cliente123','auth.gate':'Entra a tu cuenta para reservar.',
   'cm.title':'Mis reservas','cm.sub':'Consulta tus próximas reservas y tu historial.','cm.acct':'Conectado como',
   'cm.upcoming':'Próximas','cm.empty':'Aún no tienes reservas activas.','cm.emptyCta':'Reservar una mesa →',
   'cm.showPast':'Mostrar reservas pasadas','cm.hidePast':'Ocultar reservas pasadas','cm.pastTitle':'Reservas pasadas','cm.pastEmpty':'Sin reservas pasadas.',
@@ -475,9 +493,9 @@ const CLIENTS=[
  {nome:'Luana Dias',visitas:4,faltas:0,rate:5,tel:'(21) 90000-2222',ult:{pt:'Ontem',es:'Ayer'},tags:[{pt:'Frequente',es:'Frecuente'}]},
  {nome:'Júlia Andrade',visitas:3,faltas:2,rate:2,tel:'(21) 96666-3030',ult:{pt:'Hoje',es:'Hoy'},tags:[{pt:'Risco de no-show',es:'Riesgo de no-show'}]},
 ];
-/* Protótipo sem login real: simulamos um cliente conectado (conta obrigatória p/ reservas online).
-   MY_DEMO é o histórico de demonstração desse cliente — só do lado do cliente, não toca o painel. */
-const ME={nome:'Mariana Lopes',cpf:'123.456.789-00',tel:'(21) 98888-1010',email:'mariana.lopes@email.com'};
+/* ME = cliente conectado. Vacío hasta iniciar sesión (se llena desde la cuenta autenticada).
+   MY_DEMO es el historial de demostración de la cuenta cliente sembrada (Mariana). */
+let ME={nome:'',cpf:'',tel:'',email:''};
 let showPast=false;
 const MY_DEMO=[
  {id:'R-1061',nome:'Mariana Lopes',pax:4,hora:'13:00',turno:'lunch', area:'varanda',mesa:'V2',status:'paid',  valor:160,tel:'(21) 98888-1010',cpf:'123.456.789-00',pago:true, date:'2026-06-27',obs:{pt:'Almoço em família',es:'Almuerzo en familia'}},
@@ -498,7 +516,8 @@ function setLang(l){
   L=l;
   document.getElementById('l-pt').classList.toggle('on',l==='pt');
   document.getElementById('l-es').classList.toggle('on',l==='es');
-  applyI18n(); renderClient();
+  applyI18n(); renderClient(); applyAuthUI();
+  if(document.getElementById('authModal').classList.contains('open')) renderAuthForm(authMode);
   if(!document.getElementById('c-resv').classList.contains('hidden')) renderResv();
   if(!document.getElementById('c-mine').classList.contains('hidden')) renderMine();
   if(document.getElementById('admin').style.display==='block') ago(curAdmin);
@@ -511,6 +530,7 @@ function setMode(m){
   window.scrollTo(0,0); if(m==='admin') ago(curAdmin);
 }
 function cgo(v){
+  if(v==='mine' && !AUTH.user){ authIntent='mine'; openAuth('login'); return; }
   document.querySelectorAll('.cview').forEach(e=>e.classList.add('hidden'));
   document.getElementById('c-'+v).classList.remove('hidden');
   document.querySelectorAll('.cnav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
@@ -534,8 +554,9 @@ function renderClient(){
 
 /* ===================== MINHAS RESERVAS (cliente) ===================== */
 function mineList(){
+  if(!ME.cpf) return [];
   const seen=new Set(), out=[];
-  [...RESV.filter(r=>r.cpf===ME.cpf), ...MY_DEMO].forEach(r=>{ if(!seen.has(r.id)){seen.add(r.id);out.push(r);} });
+  [...RESV, ...MY_DEMO].filter(r=>r.cpf===ME.cpf).forEach(r=>{ if(!seen.has(r.id)){seen.add(r.id);out.push(r);} });
   return out;
 }
 const isMineActive = r => r.status!=='cancel' && r.status!=='noshow' && r.date>=TODAY;
@@ -592,6 +613,8 @@ function togglePast(){showPast=!showPast;renderMine();}
 /* ===================== WIZARD ===================== */
 let R={};
 function startResv(evId){
+  // Reservar requiere cuenta. Si no hay sesión, abrir login y recordar la intención.
+  if(!AUTH.user){ authIntent=evId||true; openAuth('login'); return; }
   R={step:1,date:'2026-06-20',turno:'dinner',hora:'20:00',pax:2,area:'salao',mesa:null,
      nome:ME.nome,cpf:ME.cpf,tel:ME.tel,email:ME.email,obs:'',consent:false,event:evId?EVENTS.find(e=>e.id===evId):null};
   cgo('resv'); renderResv();
@@ -878,8 +901,108 @@ async function saveReservation(){
   if(rec&&rec.id&&!RESV.some(x=>x.id===rec.id)) RESV.push(rec);
 }
 
+/* ===================== AUTENTICACIÓN (cliente) =====================
+   Login/registro contra el backend. Solo crea cuentas de tipo cliente.
+   Requiere el servidor (npm start); abierto como archivo no hay auth. */
+const AUTH={ token: localStorage.getItem('r644_token')||null, user:null };
+let authMode='login', authIntent=null;
+async function apiRaw(path,opts={}){
+  const r=await fetch('/api'+path,opts);
+  const data=await r.json().catch(()=>({}));
+  return {ok:r.ok,status:r.status,data};
+}
+function setUser(u){
+  AUTH.user=u;
+  ME={nome:u.nome||'',cpf:u.cpf||'',tel:u.tel||'',email:u.email||''};
+}
+function applyAuthUI(){
+  const u=AUTH.user;
+  document.getElementById('nav-mine').classList.toggle('hidden',!u);
+  const right=document.getElementById('cnav-right');
+  if(u){
+    right.innerHTML=`<span class="uchip">👤 ${u.nome.split(' ')[0]}</span>`
+      +`<button class="btn sm" onclick="startResv()">${t('cnav.book')}</button>`
+      +`<button class="btn ghost sm" onclick="logout()">${t('auth.logout')}</button>`;
+  }else{
+    right.innerHTML=`<button class="btn sm" onclick="openAuth('login')">${t('auth.enter')}</button>`;
+    // si estaba en una vista que requiere sesión, volver a inicio
+    if(!document.getElementById('c-mine').classList.contains('hidden')) cgo('home');
+  }
+}
+function openAuth(mode){ authMode=mode; renderAuthForm(mode); document.getElementById('authModal').classList.add('open'); }
+function closeAuth(){ document.getElementById('authModal').classList.remove('open'); }
+function authErr(msg){ const e=document.getElementById('auth-err'); if(e) e.textContent=msg||''; }
+function renderAuthForm(mode){
+  document.getElementById('auth-title').textContent = mode==='login'?t('auth.loginTitle'):t('auth.registerTitle');
+  const b=document.getElementById('auth-body');
+  if(mode==='login'){
+    b.innerHTML=`
+      <div class="field"><label>${t('auth.email')}</label><input id="au-email" type="email" placeholder="voce@email.com"></div>
+      <div class="field"><label>${t('auth.password')}</label><input id="au-senha" type="password" placeholder="••••••••"></div>
+      <div id="auth-err" class="auth-err"></div>
+      <button class="btn" style="width:100%;justify-content:center" onclick="submitLogin()">${t('auth.enter')}</button>
+      <div class="auth-switch">${t('auth.noAccount')} <a onclick="openAuth('register')">${t('auth.createAccount')}</a></div>
+      <div class="auth-demo">${t('auth.demo')}</div>`;
+  }else{
+    b.innerHTML=`
+      <div class="field"><label>${t('auth.name')} *</label><input id="au-nome" placeholder="${t('w.namePh')}"></div>
+      <div class="field"><label>${t('auth.email')} *</label><input id="au-email" type="email" placeholder="voce@email.com"></div>
+      <div class="row">
+        <div class="field"><label>${t('auth.phone')}</label><input id="au-tel" placeholder="(21) 90000-0000"></div>
+        <div class="field"><label>${t('auth.cpf')}</label><input id="au-cpf" placeholder="000.000.000-00"></div></div>
+      <div class="field"><label>${t('auth.password')} *</label><input id="au-senha" type="password" placeholder="mín. 6"></div>
+      <div id="auth-err" class="auth-err"></div>
+      <button class="btn" style="width:100%;justify-content:center" onclick="submitRegister()">${t('auth.createAccount')}</button>
+      <div class="auth-switch">${t('auth.haveAccount')} <a onclick="openAuth('login')">${t('auth.enter')}</a></div>
+      <div class="note" style="margin-top:12px">ℹ️ <span>${t('auth.clientOnly')}</span></div>`;
+  }
+}
+const $val=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+async function submitLogin(){
+  authErr('');
+  try{
+    const {ok,data}=await apiRaw('/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:$val('au-email'),senha:$val('au-senha')})});
+    if(!ok) return authErr(data.error||'Error');
+    onAuthed(data);
+  }catch(e){ authErr('Sem conexão com o servidor (rode: npm start).'); }
+}
+async function submitRegister(){
+  authErr('');
+  try{
+    const {ok,data}=await apiRaw('/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({nome:$val('au-nome'),email:$val('au-email'),senha:$val('au-senha'),tel:$val('au-tel'),cpf:$val('au-cpf')})});
+    if(!ok) return authErr(data.error||'Error');
+    onAuthed(data);
+  }catch(e){ authErr('Sem conexão com o servidor (rode: npm start).'); }
+}
+function onAuthed(data){
+  AUTH.token=data.token; localStorage.setItem('r644_token',data.token);
+  setUser(data.user); closeAuth(); applyAuthUI(); renderClient();
+  const intent=authIntent; authIntent=null;
+  if(intent==='mine') cgo('mine');
+  else if(intent) startResv(intent===true?undefined:intent);
+  else cgo('home');
+}
+async function logout(){
+  try{ await apiRaw('/auth/logout',{method:'POST',headers:{'Authorization':'Bearer '+AUTH.token}}); }catch(e){}
+  AUTH.token=null; AUTH.user=null; localStorage.removeItem('r644_token');
+  ME={nome:'',cpf:'',tel:'',email:''};
+  applyAuthUI(); cgo('home');
+}
+async function bootstrapAuth(){
+  if(!AUTH.token){ applyAuthUI(); return; }
+  try{
+    const {ok,data}=await apiRaw('/auth/me',{headers:{'Authorization':'Bearer '+AUTH.token}});
+    if(ok&&data.user) setUser(data.user);
+    else { AUTH.token=null; localStorage.removeItem('r644_token'); }
+  }catch(e){/* sem servidor */}
+  applyAuthUI();
+}
+document.getElementById('authModal').addEventListener('click',e=>{if(e.target.id==='authModal')closeAuth();});
+
 /* init */
-applyI18n(); renderClient(); renderMine(); ago('dash'); loadReservations();
+applyI18n(); renderClient(); ago('dash'); loadReservations(); bootstrapAuth();
 </script>
 </body>
 </html>
